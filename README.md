@@ -12,6 +12,14 @@ $ npm install
 
 to install all the required dependencies.
 
+Then, run
+
+```
+$ npm install -g concurrently 
+```
+
+to install the concurrently module globally, which is required to run / build the app.
+
 ## Available Scripts
 
 In the project directory, you can run:
