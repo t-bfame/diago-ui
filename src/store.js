@@ -7,9 +7,11 @@ import {
 import thunk from 'redux-thunk';
 
 import mainPageReducer from './main/reducer';
+import testTemplateDetailsPageReducer from './test-template-details/reducer';
 
 const rootReducer = combineReducers({
     mainPageReducer,
+    testTemplateDetailsPageReducer,
 });
 
 const persistedState = {};

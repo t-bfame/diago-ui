@@ -1,19 +1,19 @@
 import * as actions from './actions';
 
 const initialState = {
-  testTemplate: null,
+  testInstances: null,
 };
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case actions.CREATE_TEST:
+    case actions.START_TEST:
       return {
         ...state,
       };
-    case actions.GET_TEST:
+    case actions.GET_TEST_INSTANCES:
       return {
         ...state,
-        testTemplate: action.data.payload,
+        testInstances: action.data.payload,
       };
     default:
       return state;
