@@ -6,7 +6,7 @@ import { PageHeader, Button, Typography, Table, Space, Form, Input, Modal } from
 import moment from 'moment';
 
 import Page from '../../common/views/Page';
-import { getTestInstances } from '../actions';
+import { getTestInstances, startTest } from '../actions';
 
 const { Title } = Typography;
 
@@ -68,12 +68,14 @@ class TestTemplateDetailsPage extends Component {
     this.setState({
       modalConfirmLoading: true,
     });
-    setTimeout(() => {
+
+    const { testTemplate, getTestInstances, startTest } = this.props;
+    startTest(testTemplate.ID).then(() => {
       this.setState({
         modalConfirmLoading: false,
         modalVisible: false,
-      })
-    }, 2000);
+      });
+    });
   }
 
   handleCancel = () => {
@@ -206,6 +208,7 @@ TestTemplateDetailsPage.propTypes = {
   location: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   getTestInstances: PropTypes.func.isRequired,
+  startTest: PropTypes.func.isRequired,
   testTemplate: PropTypes.object,
   testInstances: PropTypes.array,
 };
@@ -217,6 +220,7 @@ const mapStateToProps = ({ mainPageReducer, testTemplateDetailsPageReducer }) =>
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   getTestInstances: getTestInstances,
+  startTest: startTest,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(TestTemplateDetailsPage);
