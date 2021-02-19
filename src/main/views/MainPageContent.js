@@ -1,8 +1,10 @@
-import React, { Component, useCallback } from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Input, Table, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash';
+import Test from '../../model/test';
 
 
 const columns = [
@@ -23,10 +25,26 @@ const columns = [
   }
 ];
 
-class MainPageContent extends Component {
+const MainPageContent = connect(state => ({
+  tests: state.model.tests
+}))(class MainPageContent extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      testIds: new Set(),
+    };
+  }
+
   componentDidMount() {
-    const { getTest } = this.props;
-    this.debouncedSearch = debounce(testId => getTest(testId), 500);
+    this.debouncedSearch = debounce(testId => {
+      if (testId) {
+        Test.get(testId).then(r => {
+          this.setState({testIds: new Set([r.doc.ID])})
+        }).catch(() => {
+          this.setState({testIds: new Set([])})
+        });
+      }
+    }, 500);
   }
 
   onSearchChange = e => {
@@ -35,16 +53,8 @@ class MainPageContent extends Component {
   }
 
   render() {
-    const { testTemplate, history, location } = this.props;
-    const data = [];
-    if (testTemplate) {
-      data.push({
-        key: testTemplate.ID,
-        id: testTemplate.ID,
-        name: testTemplate.Name,
-        created: '2020 - 09 - 01'
-      });
-    }
+    const { history, location, tests } = this.props;
+    const { testIds } = this.state;
     return (
       <Space direction="vertical" size='middle' style={{ 'width': '100%' }}>
         <Input
@@ -55,7 +65,15 @@ class MainPageContent extends Component {
         />
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={
+            [...(tests || [])]
+              .filter(([id,]) => testIds.has(id))
+              .map(([,test]) => ({
+                key: test.ID,
+                id: test.ID,
+                name: test.Name,
+                created: '2020 - 09 - 01',
+              }))}
           onRow={(record, rowIndex) => {
             return {
               onClick: event => {
@@ -67,13 +85,11 @@ class MainPageContent extends Component {
       </Space>
     );
   }
-}
+});
 
 MainPageContent.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
-  getTest: PropTypes.func.isRequired,
-  testTemplate: PropTypes.object,
 };
 
 export default MainPageContent;

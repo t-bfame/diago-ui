@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Form, Input, PageHeader, Button } from 'antd';
 
 import Page from '../../common/views/Page';
-import WebApi from '../utils/webApi';
+import Test from '../../model/test';
 
 const layout = {
   labelCol: {
@@ -38,17 +37,20 @@ class CreateTestTemplatePage extends Component {
     console.log('Success:', values);
     this.setState({loading: true});
     const { name, jobname, group, frequency, duration, httpmethod, httpurl } = values;
-    const response = await WebApi.createTest(name, [
-      {
-        Name: jobname,
-        Group: group,
-        Priority: 0,
-        Frequency: parseInt(frequency),
-        Duration: parseInt(duration),
-        HTTPMethod: httpmethod,
-        HTTPUrl: httpurl,
-      }
-    ]);
+    const response = await Test.create({
+      Name: name,
+      Jobs: [
+        {
+          Name: jobname,
+          Group: group,
+          Priority: 0,
+          Frequency: parseInt(frequency),
+          Duration: parseInt(duration),
+          HTTPMethod: httpmethod,
+          HTTPUrl: httpurl,
+        },
+      ],
+    });
     console.log(response);
     this.setState({loading: false});
     // TODO: show success banner

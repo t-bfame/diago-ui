@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { PageHeader, Button, Typography, Table, Space, Form, Input, Modal } from 'antd';
 import moment from 'moment';
 
 import Page from '../../common/views/Page';
-import { getTestInstances, startTest } from '../actions';
+import Test from '../../model/test';
+import TestInstance from '../../model/test-instance';
 
 const { Title } = Typography;
 
@@ -46,34 +46,44 @@ const testSchedulesTableColumns = [
   }
 ];
 
-class TestTemplateDetailsPage extends Component {
+const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => ({
+  test: state.model.tests?.get(id),
+  testInstances: state.model['test-instances'],
+}))(class TestTemplateDetailsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       modalVisible: false,
       modalConfirmLoading: false,
+      instanceIds: new Set(),
     };
   }
 
-  async componentDidMount() {
-    const { testTemplate, getTestInstances } = this.props;
-    // TODO: send api request if testTemplate is null
-    // (if the user directly goes to this url without coming here from the test templates page UI)
-    if (testTemplate) {
-      await getTestInstances(testTemplate.ID);
+  componentDidMount() {
+    const { history, match: { params: {id} }, test } = this.props;
+    if (!test) {
+      Test.get(id).catch(() => {
+        history.replace('/404');
+      });
     }
+    TestInstance.forTestId(id).then(({ docs }) => {
+      this.setState({instanceIds: new Set(docs.map(d => d.ID))});
+    });
   }
 
   handleOk = () => {
+    const { test } = this.props;
     this.setState({
       modalConfirmLoading: true,
     });
 
-    const { testTemplate, getTestInstances, startTest } = this.props;
-    startTest(testTemplate.ID).then(() => {
-      this.setState({
-        modalConfirmLoading: false,
-        modalVisible: false,
+    test.start().then(() => {
+      TestInstance.forTestId(test.ID).then(({ docs }) => {
+        this.setState({
+          modalConfirmLoading: false,
+          modalVisible: false,
+          instanceIds: new Set(docs.map(d => d.ID)),
+        });
       });
     });
   }
@@ -85,11 +95,11 @@ class TestTemplateDetailsPage extends Component {
   }
 
   render() {
-    const { location, match, testTemplate, testInstances } = this.props;
-    const { modalVisible, modalConfirmLoading } = this.state;
+    const { location, match, test, testInstances } = this.props;
+    const { modalVisible, modalConfirmLoading, instanceIds } = this.state;
     const { id } = match.params;
     console.log('Id of test template is:', id);
-    console.log('Test template:', testTemplate);
+    console.log('Test template:', test);
     console.log('Test instances:', testInstances);
 
     const headerProps = {
@@ -113,25 +123,23 @@ class TestTemplateDetailsPage extends Component {
           {...headerProps}
           onBack={() => window.history.back()}
         />
-      ) : <PageHeader {...this.headerProps} backIcon={false} />
+      ) : <PageHeader {...headerProps} backIcon={false} />
 
-    const testInstanceData = [];
-    (testInstances || []).forEach(instance => {
-      const status = instance.Status;
-      testInstanceData.push({
+    const testInstanceData = [...(testInstances || [])]
+      .filter(([id,]) => instanceIds.has(id))
+      .map(([,instance]) => ({
         key: instance.ID,
         id: instance.ID,
         name: instance.TestID,
         created: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
-        status: status.charAt(0).toUpperCase() + status.slice(1),
-      });
-    })
+        status: instance.Status.charAt(0).toUpperCase() + instance.Status.slice(1),
+      }));
 
     return (
       <div>
         <Page
           CustomPageHeader={header}
-          CustomPageContent={
+          CustomPageContent={test === undefined ? <></> : (
             <Space direction="vertical" size='middle' style={{ 'width': '100%' }}>
               <div>
                 <Title type="secondary" level={4}>
@@ -156,8 +164,8 @@ class TestTemplateDetailsPage extends Component {
                   name="basic"
                   labelAlign="left"
                   initialValues={{
-                    id: testTemplate.ID,
-                    name: testTemplate.Name,
+                    id: test.ID,
+                    name: test.Name,
                   }}
                 >
                   <Form.Item
@@ -187,7 +195,7 @@ class TestTemplateDetailsPage extends Component {
                 />
               </div>
             </Space>
-          }
+          )}
         />
         <Modal
           title="Title"
@@ -201,26 +209,12 @@ class TestTemplateDetailsPage extends Component {
       </div>
     );
   }
-}
+});
 
 TestTemplateDetailsPage.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
-  getTestInstances: PropTypes.func.isRequired,
-  startTest: PropTypes.func.isRequired,
-  testTemplate: PropTypes.object,
-  testInstances: PropTypes.array,
 };
 
-const mapStateToProps = ({ mainPageReducer, testTemplateDetailsPageReducer }) => ({
-  testTemplate: mainPageReducer.testTemplate,
-  testInstances: testTemplateDetailsPageReducer.testInstances,
-});
-
-const mapDispatchToProps = dispatch => bindActionCreators({
-  getTestInstances: getTestInstances,
-  startTest: startTest,
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(TestTemplateDetailsPage);
+export default TestTemplateDetailsPage;
