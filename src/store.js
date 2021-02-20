@@ -6,13 +6,9 @@ import {
 } from 'redux';
 import thunk from 'redux-thunk';
 
-import mainPageReducer from './main/reducer';
-import testTemplateDetailsPageReducer from './test-template-details/reducer';
 import modelReducer from './model/reducer';
 
 const rootReducer = combineReducers({
-    mainPageReducer,
-    testTemplateDetailsPageReducer,
     model: modelReducer,
 });
 
