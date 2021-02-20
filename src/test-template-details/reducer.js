@@ -15,6 +15,10 @@ const reducer = (state = initialState, action) => {
         ...state,
         testInstances: action.data.payload,
       };
+    case actions.CREATE_TEST_SCHEDULE:
+      return {
+        ...state,
+      };
     default:
       return state;
   }

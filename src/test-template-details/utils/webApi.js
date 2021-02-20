@@ -12,7 +12,17 @@ const getTestInstances = async(testId) => {
   return response;
 }
 
+const createTestSchedule = async(testId, scheduleName, cronspec) => {
+  const response = await axios.post(`${BASE_URL}/test-schedules`, {
+    "Name": scheduleName,
+    "TestID": testId,
+    "CronSpec": cronspec,
+  });
+  return response;
+}
+
 export default {
   startTest,
   getTestInstances,
+  createTestSchedule,
 };
