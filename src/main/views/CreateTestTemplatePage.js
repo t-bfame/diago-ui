@@ -4,6 +4,8 @@ import { Form, Input, PageHeader, Button } from 'antd';
 import Page from '../../common/views/Page';
 import Test from '../../model/test';
 
+import DynamicJobField from './DynamicJobField';
+
 const layout = {
   labelCol: {
     span: 8,
@@ -36,20 +38,21 @@ class CreateTestTemplatePage extends Component {
   onFinish = async(values) => {
     console.log('Success:', values);
     this.setState({loading: true});
-    const { name, jobname, group, frequency, duration, httpmethod, httpurl } = values;
+    const { name, jobs } = values;
+
     const response = await Test.create({
       Name: name,
-      Jobs: [
-        {
-          Name: jobname,
-          Group: group,
+      Jobs: jobs.map(job => {
+        return {
+          Name: job.name,
+          Group: job.group,
           Priority: 0,
-          Frequency: parseInt(frequency),
-          Duration: parseInt(duration),
-          HTTPMethod: httpmethod,
-          HTTPUrl: httpurl,
-        },
-      ],
+          Frequency: parseInt(job.frequency),
+          Duration: parseInt(job.duration),
+          HTTPMethod: job.httpmethod,
+          HTTPUrl: job.httpurl,
+        }
+      })
     });
     console.log(response);
     this.setState({loading: false});
@@ -83,6 +86,7 @@ class CreateTestTemplatePage extends Component {
             name="basic"
             onFinish={this.onFinish}
             onFinishFailed={this.onFinishFailed}
+            initialValues={{jobs: [""]}}
           >
             <Form.Item
               label="Name"
@@ -96,78 +100,8 @@ class CreateTestTemplatePage extends Component {
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              label="Job Name"
-              name="jobname"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input the job name!',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Job Group"
-              name="group"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input the group!',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Job Frequency"
-              name="frequency"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input the frequency!',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Job Duration"
-              name="duration"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input the duration!',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="HTTP Method"
-              name="httpmethod"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input the HTTP method!',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="HTTP Url"
-              name="httpurl"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input the HTTP Url!',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
+
+            <DynamicJobField />
 
             <Form.Item {...tailLayout}>
               <Button type="primary" htmlType="submit" loading={loading}>
