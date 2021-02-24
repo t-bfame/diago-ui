@@ -47,7 +47,7 @@ const LandingPage = ({ history }) => {
         } else {
           active.push(ordered[i].ID);
         }
-        if (active.length + finished.length == 10) {
+        if (active.length + finished.length === 10) {
           break;
         }
       }
