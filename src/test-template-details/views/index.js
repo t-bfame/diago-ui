@@ -1,7 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { PageHeader, Button, Typography, Table, Space, Form, Input, Modal, Row, Col } from 'antd';
+import {
+  PageHeader,
+  Button,
+  Typography,
+  Table,
+  Space,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Col,
+  Card,
+  Descriptions,
+  Collapse,
+} from 'antd';
 import moment from 'moment';
 
 import Page from '../../common/views/Page';
@@ -9,7 +23,10 @@ import Test from '../../model/test';
 import TestInstance from '../../model/test-instance';
 import TestSchedule from '../../model/test-schedule';
 
+import '../styles/index.css';
+
 const { Title } = Typography;
+const { Panel } = Collapse;
 
 const testInstanceTableColumns = [
   {
@@ -182,6 +199,23 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
         created: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
         status: instance.Status.charAt(0).toUpperCase() + instance.Status.slice(1),
       }));
+    
+    let jobPanels = null;
+    if (test) {
+      jobPanels = test.Jobs.map((job, idx) => {
+        return (
+          <Panel header={`Job ${job.Name}`} key={`${idx}`}>
+            <Descriptions>
+              <Descriptions.Item label="HTTP Method">{job.HTTPMethod}</Descriptions.Item>
+              <Descriptions.Item label="HTTP Url">{job.HTTPUrl}</Descriptions.Item>
+              <Descriptions.Item label="Group">{job.Group}</Descriptions.Item>
+              <Descriptions.Item label="Frequency">{job.Frequency}</Descriptions.Item>
+              <Descriptions.Item label="Duration">{job.Duration}</Descriptions.Item>
+            </Descriptions>
+          </Panel>
+        )
+      });
+    }
 
     return (
       <div>
@@ -202,37 +236,20 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
                 <Title type="secondary" level={4}>
                   Configs
                 </Title>
-                <Form
-                  labelCol={{
-                    span: 4,
-                  }}
-                  wrapperCol={{
-                    span: 8,
-                  }}
-                  name="basic"
-                  labelAlign="left"
-                  initialValues={{
-                    id: test.ID,
-                    name: test.Name,
-                  }}
+                <Card
+                  size='small'
+                  style={{ width: '100%' }}
+                  className='test-template-basic-info'
                 >
-                  <Form.Item
-                    label="ID"
-                    name="id"
-                  >
-                    <Input
-                      disabled
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Name"
-                    name="name"
-                  >
-                    <Input
-                      disabled
-                    />
-                  </Form.Item>
-                </Form>
+                  <Descriptions>
+                    <Descriptions.Item label="Name">{test.Name}</Descriptions.Item>
+                    <Descriptions.Item label="Number of jobs">{test.Jobs.length}</Descriptions.Item>
+                    <Descriptions.Item label="Creation date">2020 - 09 - 01</Descriptions.Item>
+                  </Descriptions>
+                </Card>
+                <Collapse bordered={false}>
+                  {jobPanels}
+                </Collapse>
               </div>
               <div>
                 <Row justify='space-between'>
@@ -280,14 +297,14 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
               label="Name"
               rules={[{ required: true, message: 'Please enter the name of the test schedule' }]}
             >
-              <Input />
+              <Input placeholder='Name of test schedule' />
             </Form.Item>
             <Form.Item
               name="cronspec"
               label="Cron Spec"
               rules={[{ required: true, message: 'Please enter a valid cronspec' }]}
             >
-              <Input />
+              <Input placeholder='* * * * *' />
             </Form.Item>
           </Form>
         </Modal>

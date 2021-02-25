@@ -98,7 +98,7 @@ class CreateTestTemplatePage extends Component {
                 },
               ]}
             >
-              <Input />
+              <Input placeholder='Name of test' />
             </Form.Item>
 
             <DynamicJobField />
