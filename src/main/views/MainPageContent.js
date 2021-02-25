@@ -38,11 +38,14 @@ const MainPageContent = connect(state => ({
   componentDidMount() {
     this.debouncedSearch = debounce(testId => {
       if (testId) {
-        Test.get(testId).then(r => {
-          this.setState({testIds: new Set([r.doc.ID])})
+        Test.forPrefix(testId).then(r => {
+          this.setState({testIds: new Set([...r.docs.map(doc => doc.ID)])})
         }).catch(() => {
           this.setState({testIds: new Set([])})
         });
+      } else {
+        // empty search - clear table
+        this.setState({testIds: new Set()})
       }
     }, 500);
   }

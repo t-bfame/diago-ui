@@ -18,9 +18,13 @@ export default class TestInstance extends Document {
           docs,
           docType: this.docName(),
         },
-      })
-      return Object.assign(response, { docs })
+      });
+      return Object.assign(response, { docs });
     }
     return response;
+  }
+
+  isTerminal() {
+    return ['done', 'failed', 'stopped'].includes(this.Status);
   }
 }

@@ -31,6 +31,22 @@ export default class Document {
     return response;
   }
 
+  static async all() {
+    const response = await getClient().get(`${this.docName()}/all`);
+    if (response.data?.success) {
+      const docs = response.data?.payload.map(raw => new this(raw));
+      store.dispatch({
+        type: RECEIVE_DOCUMENTS,
+        data: {
+          docs,
+          docType: this.docName(),
+        },
+      });
+      return Object.assign(response, { docs });
+    }
+    return response;
+  }
+
   static async create(data) {
     const response = await getClient().post(`${this.docName()}`, data);
     return response;
