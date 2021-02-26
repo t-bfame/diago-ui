@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { PageHeader, Button, Space, Typography, Descriptions, Badge} from 'antd';
+import { PageHeader, Button, Space, Typography, Descriptions, Badge, Card } from 'antd';
+import moment from 'moment';
+
+import {
+  LinkOutlined
+} from '@ant-design/icons';
 
 import Page from '../../common/views/Page';
 
-const { Title, Link } = Typography;
+const { Title } = Typography;
 
 const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => ({
   testInstances: state.model['test-instances'],
@@ -15,21 +21,45 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       this.state = {
       };
     }
-
-    goToTestTemplateDeatilPage = () => {
-      const { history, location } = this.props;
-      //history.push(`test-template-details/${record.id}`, {from: location.pathname});
-    }
   
     pauseButtonClicked = () => {
       console.log("Pause Button Clicked!");
+    }
+
+    createJobResultUI = (key, jobResult) => {
+      console.log(jobResult);
+      return (
+        <Card
+          key={key}
+          title={`Job ${key}`}
+          extra={<Typography.Link><LinkOutlined /></Typography.Link>}
+          style={{ width: '100%' }}
+        >
+          <Descriptions>
+            <Descriptions.Item label="Bytes In">{jobResult.bytes_in.total}</Descriptions.Item>
+            <Descriptions.Item label="Bytes Out">{jobResult.bytes_out.total}</Descriptions.Item>
+            <Descriptions.Item label="Duration">{jobResult.duration}</Descriptions.Item>
+            <Descriptions.Item label="Start Time">{moment(jobResult.earliest).format("MM/DD, h:mm:ss a")}</Descriptions.Item>
+            <Descriptions.Item label="End Time">{moment(jobResult.latest).format("MM/DD, h:mm:ss a")}</Descriptions.Item>
+            <Descriptions.Item label="Errors">None</Descriptions.Item>
+            <Descriptions.Item label="Rate">{parseFloat(jobResult.rate).toFixed(2)}</Descriptions.Item>
+            <Descriptions.Item label="Requests">{jobResult.requests}</Descriptions.Item>
+            <Descriptions.Item label="Status Codes"></Descriptions.Item>
+            <Descriptions.Item label="Percent Success">{jobResult.success}</Descriptions.Item>
+            <Descriptions.Item label="Throughput">{parseFloat(jobResult.throughput).toFixed(2)}</Descriptions.Item>
+            <Descriptions.Item label="Latencies"></Descriptions.Item>
+          </Descriptions>
+        </Card>
+      );
     }
   
     render() {
       const { match, history, location, testInstances } = this.props;
       const { id } = match.params;
 
-      console.log(testInstances);
+      // TODO: refactor; use a better approach to getting a particular test instance
+      const instance = [...testInstances].filter(instance => instance[0] === id)[0][1];
+      console.log(instance.Metrics);
 
       const headerProps = {
         className: "site-page-header",
@@ -49,28 +79,52 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
           onBack={() => window.history.back()}
         />
       ) : <PageHeader {...headerProps} backIcon={false} />
+      
+      const metrics = Object.keys(instance.Metrics).map(key => this.createJobResultUI(key, instance.Metrics[key]));
 
       return (
         <Page
           CustomPageHeader={header}
           CustomPageContent={
             <Space direction="vertical" size='large' style={{ 'width': '100%' }}>
-              <Descriptions title="Info" bordered column={1}>
-                <Descriptions.Item label="UID">Zhou Maomao</Descriptions.Item>
-                <Descriptions.Item label="Test Template">1810000000</Descriptions.Item>
-                <Descriptions.Item label="Status">
-                  <Badge status="processing" text="Running" />
-                </Descriptions.Item>
-                <Descriptions.Item label="Prometheus Metric Link">
-                  <Link href="https://ant.design">
-                    Prometheus link
-                  </Link>
-                </Descriptions.Item>
-              </Descriptions>
               <div>
-                <Title level={4}>
-                  Results:
+                <Title type="secondary" level={4}>
+                  Basic Information
                 </Title>
+                <Descriptions bordered column={1}>
+                  <Descriptions.Item label="ID">{instance.ID}</Descriptions.Item>
+                  <Descriptions.Item label="Test Template">
+                    <Link to={{
+                      pathname: `/test-template-details/${instance.TestID}`,
+                      state: {from: location.pathname}
+                    }}>
+                      {instance.TestID}
+                    </Link>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Status">
+                    <Badge status='success' text={instance.Status} />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Created At">
+                    {moment.unix(instance.CreatedAt).format('YYYY-MM-DD')}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Type">
+                    {instance.Type}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Prometheus Metric Link">
+                    {/* TODO: refactor this link */}
+                    <Typography.Link href="http://192.168.64.3:30421">
+                      Grafana dashboard
+                    </Typography.Link>
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+              <div>
+                <Title type='secondary' level={4}>
+                  Results
+                </Title>
+                <Space direction="vertical" size='small' style={{ 'width': '100%' }}>
+                  {metrics}
+                </Space>
               </div>
             </Space>
           }

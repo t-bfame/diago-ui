@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 import TestInstance from './model/test-instance';
 import { PageHeader, Space, Typography, Table } from 'antd';
@@ -75,8 +76,9 @@ const LandingPage = ({ history }) => {
               dataSource={activeIds.map(id => {
                 const instance = testInstances.get(id)
                 return {
+                  ...instance,
                   key: instance.ID,
-                  ...instance
+                  CreatedAt: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
                 };
               })}
               // TODO: links to test instance details
@@ -91,8 +93,9 @@ const LandingPage = ({ history }) => {
               dataSource={finishedIds.map(id => {
                 const instance = testInstances.get(id);
                 return {
-                  key: instance.ID,
                   ...instance,
+                  key: instance.ID,
+                  CreatedAt: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
                 };
               })}
               // TODO: links to test instance details

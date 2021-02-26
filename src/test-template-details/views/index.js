@@ -163,7 +163,6 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
   }
 
   handleRowClick = (e, record) => {
-    console.log(record);
     const { history, location } = this.props;
     if (record.status === "Done") {
       history.push(`/test-instance-details/${record.id}`, {from: location.pathname});
