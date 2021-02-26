@@ -72,7 +72,13 @@ const LandingPage = ({ history }) => {
             </Typography.Title>
             <Table
               columns={testInstanceCols}
-              dataSource={activeIds.map(id => testInstances.get(id))}
+              dataSource={activeIds.map(id => {
+                const instance = testInstances.get(id)
+                return {
+                  key: instance.ID,
+                  ...instance
+                };
+              })}
               // TODO: links to test instance details
             />
           </div>
@@ -82,12 +88,19 @@ const LandingPage = ({ history }) => {
             </Typography.Title>
             <Table
               columns={testInstanceCols}
-              dataSource={finishedIds.map(id => testInstances.get(id))}
+              dataSource={finishedIds.map(id => {
+                const instance = testInstances.get(id);
+                return {
+                  key: instance.ID,
+                  ...instance,
+                };
+              })}
               // TODO: links to test instance details
             />
           </div>
         </Space>
       }
+      currentPage="/"
     />
   )
 }

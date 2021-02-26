@@ -40,6 +40,11 @@ const testInstanceTableColumns = [
     key: 'name',
   },
   {
+    title: 'Type',
+    dataIndex: 'type',
+    key: 'type',
+  },
+  {
     title: 'Creation Date',
     dataIndex: 'created',
     key: 'created',
@@ -157,6 +162,14 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
     this.testScheduleModalFormRef.current.resetFields();
   }
 
+  handleRowClick = (e, record) => {
+    console.log(record);
+    const { history, location } = this.props;
+    if (record.status === "Done") {
+      history.push(`/test-instance-details/${record.id}`, {from: location.pathname});
+    }
+  }
+
   testScheduleModalFormRef = React.createRef();
 
   render() {
@@ -196,6 +209,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
         key: instance.ID,
         id: instance.ID,
         name: instance.TestID,
+        type: instance.Type,
         created: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
         status: instance.Status.charAt(0).toUpperCase() + instance.Status.slice(1),
       }));
@@ -230,6 +244,9 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
                 <Table
                   columns={testInstanceTableColumns}
                   dataSource={testInstanceData}
+                  onRow={(record, rowIndex) => {
+                    return {onClick: e => this.handleRowClick(e, record)};
+                  }}
                 />
               </div>
               <div>
@@ -270,6 +287,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
               </div>
             </Space>
           )}
+          currentPage="/tests"
         />
         <Modal
           title="Please confirm"

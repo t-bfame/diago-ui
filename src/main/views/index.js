@@ -34,6 +34,7 @@ export default class MainPage extends Component {
             location={location}
           />
         }
+        currentPage="/tests"
       />
     );
   }

@@ -7,16 +7,13 @@ import Page from '../../common/views/Page';
 
 const { Title, Link } = Typography;
 
-const TestInstanceDetailPage = connect((state, { match: { params: {id} } }) => ({
-    
-}))(class TestInstanceDetailPage extends Component {
-
+const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => ({
+  testInstances: state.model['test-instances'],
+}))(class TestInstanceDetailsPage extends Component {
     constructor(props) {
-        super(props);
-        this.state = {
-
-        };
-
+      super(props);
+      this.state = {
+      };
     }
 
     goToTestTemplateDeatilPage = () => {
@@ -29,55 +26,63 @@ const TestInstanceDetailPage = connect((state, { match: { params: {id} } }) => (
     }
   
     render() {
-
-      const { match, history, location } = this.props;
+      const { match, history, location, testInstances } = this.props;
       const { id } = match.params;
+
+      console.log(testInstances);
+
+      const headerProps = {
+        className: "site-page-header",
+        title: "Test Instance Details",
+        subTitle: `view the details of test instance ${id}`,
+        extra: (
+          <Button key="1" type="primary" onClick={this.pauseButtonClicked}>
+            Pause Test Instance
+          </Button>
+        ),
+      };
+
+      const header = location.state
+      ? (
+        <PageHeader
+          {...headerProps}
+          onBack={() => window.history.back()}
+        />
+      ) : <PageHeader {...headerProps} backIcon={false} />
 
       return (
         <Page
-          CustomPageHeader={
-            <PageHeader
-              className="site-page-header"
-              backIcon={false}
-              title="Test Instance Details"
-              subTitle="manage everything related to a test instance!"
-              extra={
-                <Button key="1" type="primary" onClick={this.pauseButtonClicked}>
-                  Pause Test Instance
-                </Button>
-              }
-            />
-          }
+          CustomPageHeader={header}
           CustomPageContent={
-              <Space direction="vertical" size='middle' style={{ 'width': '100%' }}>
-                  <Descriptions title="Info" bordered column={1}>
-                      <Descriptions.Item label="UID">Zhou Maomao</Descriptions.Item>
-                      <Descriptions.Item label="Test Template">1810000000</Descriptions.Item>
-                      <Descriptions.Item label="Status">
-                          <Badge status="processing" text="Running" />
-                      </Descriptions.Item>
-                      <Descriptions.Item label="Prometheus Metric Link">
-                          <Link href="https://ant.design">
-                          Prometheus link
-                          </Link>
-                      </Descriptions.Item>
-                  </Descriptions>
-                  <div>
-                      <Title level={4}>
-                      Results:
-                      </Title>
-                  </div>
-              </Space>
+            <Space direction="vertical" size='large' style={{ 'width': '100%' }}>
+              <Descriptions title="Info" bordered column={1}>
+                <Descriptions.Item label="UID">Zhou Maomao</Descriptions.Item>
+                <Descriptions.Item label="Test Template">1810000000</Descriptions.Item>
+                <Descriptions.Item label="Status">
+                  <Badge status="processing" text="Running" />
+                </Descriptions.Item>
+                <Descriptions.Item label="Prometheus Metric Link">
+                  <Link href="https://ant.design">
+                    Prometheus link
+                  </Link>
+                </Descriptions.Item>
+              </Descriptions>
+              <div>
+                <Title level={4}>
+                  Results:
+                </Title>
+              </div>
+            </Space>
           }
         />
       );
     }
   });
 
-TestInstanceDetailPage.propTypes = {
+TestInstanceDetailsPage.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   //match: PropTypes.object.isRequired,
 };
 
-export default TestInstanceDetailPage;
+export default TestInstanceDetailsPage;

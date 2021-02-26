@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import { Layout, Menu, Typography }  from 'antd';
 import {
   DesktopOutlined,
   PieChartOutlined,
-  FileOutlined,
   TeamOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 
 import '../styles/index.css';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Title } = Typography;
-const { SubMenu } = Menu;
 
 class Page extends Component {
   constructor(props) {
@@ -27,8 +25,13 @@ class Page extends Component {
     this.setState({collapsed});
   }
 
+  handleNavigation = e => {
+    const { history } = this.props;
+    history.push(e.key);
+  }
+
   render() {
-    const { CustomPageHeader, CustomPageContent } = this.props;
+    const { CustomPageHeader, CustomPageContent, currentPage } = this.props;
     const { collapsed } = this.state;
     const siteTitleText = collapsed ? 'D' : 'Diago';
     
@@ -46,24 +49,15 @@ class Page extends Component {
               {siteTitleText}
             </Title>
           </div>
-          <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-            <Menu.Item key="1" icon={<PieChartOutlined />}>
-              Option 1
+          <Menu theme="dark" defaultSelectedKeys={[currentPage]} mode="inline" onClick={this.handleNavigation}>
+            <Menu.Item key="/" icon={<PieChartOutlined />}>
+              Home
             </Menu.Item>
-            <Menu.Item key="2" icon={<DesktopOutlined />}>
-              Option 2
+            <Menu.Item key="/tests" icon={<DesktopOutlined />}>
+              Test Templates
             </Menu.Item>
-            <SubMenu key="sub1" icon={<UserOutlined />} title="User">
-              <Menu.Item key="3">Tom</Menu.Item>
-              <Menu.Item key="4">Bill</Menu.Item>
-              <Menu.Item key="5">Alex</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub2" icon={<TeamOutlined />} title="Team">
-              <Menu.Item key="6">Team 1</Menu.Item>
-              <Menu.Item key="8">Team 2</Menu.Item>
-            </SubMenu>
-            <Menu.Item key="9" icon={<FileOutlined />}>
-              Files
+            <Menu.Item key="/resources" icon={<TeamOutlined />} title="Team">
+              Resources
             </Menu.Item>
           </Menu>
         </Sider>
@@ -91,6 +85,8 @@ class Page extends Component {
 Page.propTypes = {
   CustomPageHeader: PropTypes.element.isRequired,
   CustomPageContent: PropTypes.element.isRequired,
+  history: PropTypes.object.isRequired,
+  currentPage: PropTypes.string,
 };
 
-export default Page;
+export default withRouter(Page);

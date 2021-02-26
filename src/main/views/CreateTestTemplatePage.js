@@ -110,6 +110,7 @@ class CreateTestTemplatePage extends Component {
             </Form.Item>
           </Form>
         }
+        currentPage="/tests"
       />
     );
   }
