@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 
 import Page from '../../common/views/Page';
+import TestInstance from '../../model/test-instance';
 
 const { Title } = Typography;
 
@@ -19,6 +20,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
     constructor(props) {
       super(props);
       this.state = {
+        ready: false,
       };
     }
   
@@ -52,13 +54,29 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
         </Card>
       );
     }
+
+    componentDidMount() {
+      const { testInstances, history, match: { params: { id } } } = this.props;
+      if (testInstances?.get(id)) {
+        this.setState({ready: true});
+      } else {
+        // TODO: get TestID from referrer or something...
+        TestInstance.all()
+        .then(() => { this.setState({ready: true}); })
+        .catch(() => { history.replace('/404'); })
+      }
+    }
   
     render() {
       const { match, history, location, testInstances } = this.props;
       const { id } = match.params;
+      const { ready } = this.state;
 
-      // TODO: refactor; use a better approach to getting a particular test instance
-      const instance = [...testInstances].filter(instance => instance[0] === id)[0][1];
+      if (!ready) {
+        return null;
+      }
+
+      const instance = testInstances.get(id);
       console.log(instance.Metrics);
 
       const headerProps = {
@@ -79,8 +97,6 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
           onBack={() => window.history.back()}
         />
       ) : <PageHeader {...headerProps} backIcon={false} />
-      
-      const metrics = Object.keys(instance.Metrics).map(key => this.createJobResultUI(key, instance.Metrics[key]));
 
       return (
         <Page
@@ -123,7 +139,11 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                   Results
                 </Title>
                 <Space direction="vertical" size='small' style={{ 'width': '100%' }}>
-                  {metrics}
+                  {
+                    instance.Metrics
+                    ? Object.keys(instance.Metrics).map(key => this.createJobResultUI(key, instance.Metrics[key]))
+                    : null
+                  }
                 </Space>
               </div>
             </Space>

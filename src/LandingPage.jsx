@@ -8,12 +8,12 @@ import Page from './common/views/Page';
 
 const testInstanceCols = [
   {
-    title: "ID",
+    title: "Test Instance ID",
     dataIndex: 'ID',
     key: 'ID',
   },
   {
-    title: "TestID",
+    title: "Test Template ID",
     dataIndex: 'TestID',
     key: 'TestID',
   },
@@ -81,7 +81,7 @@ const LandingPage = ({ history }) => {
                   CreatedAt: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
                 };
               })}
-              // TODO: links to test instance details
+              onRow={(record,) => ({onClick: () => { history.push(`test-instance-details/${record.ID}`); } })}
             />
           </div>
           <div>
@@ -98,7 +98,7 @@ const LandingPage = ({ history }) => {
                   CreatedAt: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
                 };
               })}
-              // TODO: links to test instance details
+              onRow={(record,) => ({onClick: () => { history.push(`test-instance-details/${record.ID}`); } })}
             />
           </div>
         </Space>
