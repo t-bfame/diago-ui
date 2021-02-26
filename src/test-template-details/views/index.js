@@ -58,14 +58,24 @@ const testInstanceTableColumns = [
 
 const testSchedulesTableColumns = [
   {
-    title: 'Test Template ID',
-    dataIndex: 'id',
-    key: 'id',
+    title: 'Schedule ID',
+    dataIndex: 'ID',
+    key: 'ID',
   },
   {
-    title: 'Scheduled time',
-    dataIndex: 'time',
-    key: 'time',
+    title: 'Test Template ID',
+    dataIndex: 'TestID',
+    key: 'TestID',
+  },
+  {
+    title: 'Name',
+    dataIndex: 'Name',
+    key: 'Name',
+  },
+  {
+    title: 'CronSpec',
+    dataIndex: 'CronSpec',
+    key: 'CronSpec',
   }
 ];
 
@@ -81,6 +91,7 @@ const testScheduleModalFormLayout = {
 const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => ({
   test: state.model.tests?.get(id),
   testInstances: state.model['test-instances'],
+  testSchedules: state.model['test-schedules'],
 }))(class TestTemplateDetailsPage extends Component {
 
   constructor(props) {
@@ -88,9 +99,10 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
     this.state = {
       submitTestModalVisible: false,
       submitTestModalLoading: false,
-      instanceIds: new Set(),
       testScheduleModalVisible: false,
       testScheduleModalLoading: false,
+      instanceIds: [],
+      scheduleIds: [],
     };
   }
 
@@ -102,7 +114,12 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
       });
     }
     TestInstance.forTestId(id).then(({ docs }) => {
-      this.setState({instanceIds: new Set(docs.map(d => d.ID))});
+      this.setState({
+        instanceIds: docs.sort(({ CreatedAt: c1 }, { CreatedAt: c2 }) => c2 - c1).map(d => d.ID),
+      });
+    });
+    TestSchedule.forTestId(id).then(({ docs }) => {
+      this.setState({scheduleIds: docs.map(d => d.ID)});
     });
   }
 
@@ -117,7 +134,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
         this.setState({
           submitTestModalLoading: false,
           submitTestModalVisible: false,
-          instanceIds: new Set(docs.map(d => d.ID)),
+          instanceIds: docs.sort(({ CreatedAt: c1 }, { CreatedAt: c2 }) => c2 - c1).map(d => d.ID),
         });
       });
     });
@@ -150,8 +167,10 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
       TestID: test.ID,
       CronSpec: cronspec,
     })
+    const { docs } = await TestSchedule.forTestId(test.ID);
     console.log(response);
     this.setState({
+      scheduleIds: docs.map(doc => doc.ID),
       testScheduleModalLoading: false,
       showTestScheduleModal: false,
     });
@@ -172,8 +191,10 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
   testScheduleModalFormRef = React.createRef();
 
   render() {
-    const { location, match, test, testInstances } = this.props;
-    const { submitTestModalVisible, submitTestModalLoading, instanceIds, showTestScheduleModal } = this.state;
+    const { location, match, test, testInstances, testSchedules } = this.props;
+    const {
+      submitTestModalVisible, submitTestModalLoading, instanceIds, scheduleIds, showTestScheduleModal,
+    } = this.state;
     const { id } = match.params;
     console.log('Id of test template is:', id);
     console.log('Test template:', test);
@@ -202,9 +223,9 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
         />
       ) : <PageHeader {...headerProps} backIcon={false} />
 
-    const testInstanceData = [...(testInstances || [])]
-      .filter(([id,]) => instanceIds.has(id))
-      .map(([,instance]) => ({
+    const testInstanceData = instanceIds
+      .map(id => testInstances.get(id))
+      .map(instance => ({
         key: instance.ID,
         id: instance.ID,
         name: instance.TestID,
@@ -282,6 +303,11 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
                 </Row>
                 <Table
                   columns={testSchedulesTableColumns}
+                  dataSource={
+                    scheduleIds
+                      .map(id => testSchedules.get(id))
+                      .map(s => Object.assign({}, s, {key: s.ID}))
+                  }
                 />
               </div>
             </Space>

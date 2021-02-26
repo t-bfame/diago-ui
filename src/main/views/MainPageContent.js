@@ -31,7 +31,7 @@ const MainPageContent = connect(state => ({
   constructor(props){
     super(props);
     this.state = {
-      testIds: new Set(),
+      testIds: [],
     };
   }
 
@@ -39,13 +39,13 @@ const MainPageContent = connect(state => ({
     this.debouncedSearch = debounce(testId => {
       if (testId) {
         Test.forPrefix(testId).then(r => {
-          this.setState({testIds: new Set([...r.docs.map(doc => doc.ID)])})
+          this.setState({testIds: r.docs.map(doc => doc.ID)})
         }).catch(() => {
-          this.setState({testIds: new Set([])})
+          this.setState({testIds: []})
         });
       } else {
         // empty search - clear table
-        this.setState({testIds: new Set()})
+        this.setState({testIds: []})
       }
     }, 500);
   }
@@ -69,9 +69,9 @@ const MainPageContent = connect(state => ({
         <Table
           columns={columns}
           dataSource={
-            [...(tests || [])]
-              .filter(([id,]) => testIds.has(id))
-              .map(([,test]) => ({
+            testIds
+              .map(id => tests.get(id))
+              .map(test => ({
                 key: test.ID,
                 id: test.ID,
                 name: test.Name,
