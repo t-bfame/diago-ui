@@ -2,6 +2,8 @@ import React from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { Form, Divider, Button, Select, Input } from "antd";
 
+const { TextArea } = Input;
+
 const tailLayout = {
   wrapperCol: {
     offset: 8,
@@ -80,7 +82,15 @@ const DynamicJobField = props => {
                   <Select.Option value="PUT">PUT</Select.Option>
                   <Select.Option value="POST">POST</Select.Option>
                   <Select.Option value="DELETE">DELETE</Select.Option>
+                  <Select.Option value="OPTIONS">OPTIONS</Select.Option>
+                  <Select.Option value="PATCH">PATCH</Select.Option>
                 </Select>
+              </Form.Item>
+              <Form.Item
+                label="JSON Body"
+                name={[index, "body"]}
+              >
+                <TextArea rows={3} placeholder='{&#10;.&emsp;"foo": "bar"&#10;}' />
               </Form.Item>
               <Form.Item
                 label="HTTP Url"

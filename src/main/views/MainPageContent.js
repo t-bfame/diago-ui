@@ -5,6 +5,7 @@ import { Input, Table, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash';
 import Test from '../../model/test';
+import moment from 'moment';
 
 
 const columns = [
@@ -75,7 +76,7 @@ const MainPageContent = connect(state => ({
                 key: test.ID,
                 id: test.ID,
                 name: test.Name,
-                created: '2020 - 09 - 01',
+                created: moment().format('YYYY-MM-DD'),
               }))}
           onRow={(record, rowIndex) => {
             return {

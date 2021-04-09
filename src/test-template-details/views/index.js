@@ -243,8 +243,8 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
               <Descriptions.Item label="HTTP Method">{job.HTTPMethod}</Descriptions.Item>
               <Descriptions.Item label="HTTP Url">{job.HTTPUrl}</Descriptions.Item>
               <Descriptions.Item label="Group">{job.Group}</Descriptions.Item>
-              <Descriptions.Item label="Frequency">{job.Frequency}</Descriptions.Item>
-              <Descriptions.Item label="Duration">{job.Duration}</Descriptions.Item>
+              <Descriptions.Item label="Frequency (reqs / s)">{job.Frequency}</Descriptions.Item>
+              <Descriptions.Item label="Duration (s)">{job.Duration}</Descriptions.Item>
             </Descriptions>
           </Panel>
         )
@@ -281,7 +281,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
                   <Descriptions>
                     <Descriptions.Item label="Name">{test.Name}</Descriptions.Item>
                     <Descriptions.Item label="Number of jobs">{test.Jobs.length}</Descriptions.Item>
-                    <Descriptions.Item label="Creation date">2020 - 09 - 01</Descriptions.Item>
+                    <Descriptions.Item label="Creation date">{moment().format('YYYY-MM-DD')}</Descriptions.Item>
                   </Descriptions>
                 </Card>
                 <Collapse bordered={false}>

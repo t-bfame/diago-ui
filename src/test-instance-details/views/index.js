@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { PageHeader, Button, Space, Typography, Descriptions, Badge, Card } from 'antd';
+import { PageHeader, Button, Space, Typography, Descriptions, Badge, Card, Modal } from 'antd';
 import moment from 'moment';
 
 import {
-  LinkOutlined
+  BarChartOutlined
 } from '@ant-design/icons';
 
 import Page from '../../common/views/Page';
@@ -21,7 +21,17 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       super(props);
       this.state = {
         ready: false,
+        metricsModalVisible: false,
+        metrics: null,
       };
+    }
+
+    openMetricsModal = (metrics) => {
+      this.setState({metricsModalVisible: true, metrics: metrics});
+    }
+
+    closeMetricsModal = () => {
+      this.setState({metricsModalVisible: false, metrics: null});
     }
   
     pauseButtonClicked = () => {
@@ -34,22 +44,28 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
         <Card
           key={key}
           title={`Job ${key}`}
-          extra={<Typography.Link><LinkOutlined /></Typography.Link>}
+          extra={
+            <Typography.Link>
+              <BarChartOutlined
+                style={{"fontSize": 18}}
+                onClick={() => this.openMetricsModal(jobResult)} />
+            </Typography.Link>
+          }
           style={{ width: '100%' }}
         >
           <Descriptions>
             <Descriptions.Item label="Bytes In">{jobResult.bytes_in.total}</Descriptions.Item>
             <Descriptions.Item label="Bytes Out">{jobResult.bytes_out.total}</Descriptions.Item>
-            <Descriptions.Item label="Duration">{jobResult.duration}</Descriptions.Item>
+            <Descriptions.Item label="Duration (s)">{(jobResult.duration / 1000000000.0).toFixed(2)}</Descriptions.Item>
             <Descriptions.Item label="Start Time">{moment(jobResult.earliest).format("MM/DD, h:mm:ss a")}</Descriptions.Item>
             <Descriptions.Item label="End Time">{moment(jobResult.latest).format("MM/DD, h:mm:ss a")}</Descriptions.Item>
             <Descriptions.Item label="Errors">None</Descriptions.Item>
-            <Descriptions.Item label="Rate">{parseFloat(jobResult.rate).toFixed(2)}</Descriptions.Item>
+            <Descriptions.Item label="Rate (reqs / s)">{parseFloat(jobResult.rate).toFixed(2)}</Descriptions.Item>
             <Descriptions.Item label="Requests">{jobResult.requests}</Descriptions.Item>
-            <Descriptions.Item label="Status Codes"></Descriptions.Item>
+            <Descriptions.Item label="Status Codes">{Object.keys(jobResult.status_codes).join(', ')}</Descriptions.Item>
             <Descriptions.Item label="Percent Success">{jobResult.success}</Descriptions.Item>
-            <Descriptions.Item label="Throughput">{parseFloat(jobResult.throughput).toFixed(2)}</Descriptions.Item>
-            <Descriptions.Item label="Latencies"></Descriptions.Item>
+            <Descriptions.Item label="Throughput (reqs / s)">{parseFloat(jobResult.throughput).toFixed(2)}</Descriptions.Item>
+            <Descriptions.Item label="Latencies">see link</Descriptions.Item>
           </Descriptions>
         </Card>
       );
@@ -68,9 +84,9 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
     }
   
     render() {
-      const { match, history, location, testInstances } = this.props;
+      const { match, location, testInstances } = this.props;
       const { id } = match.params;
-      const { ready } = this.state;
+      const { ready, metricsModalVisible } = this.state;
 
       if (!ready) {
         return null;
@@ -146,6 +162,14 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                   }
                 </Space>
               </div>
+              <Modal
+                title="Success and Latency Metrics"
+                visible={metricsModalVisible}
+                onOk={this.closeMetricsModal}
+                onCancel={this.closeMetricsModal}
+              >
+                <p>Are you sure you want to start a new test instance?</p>
+              </Modal>
             </Space>
           }
         />
