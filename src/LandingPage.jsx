@@ -5,6 +5,7 @@ import moment from 'moment';
 import TestInstance from './model/test-instance';
 import { PageHeader, Space, Typography, Table } from 'antd';
 import Page from './common/views/Page';
+import Status from './common/views/Status';
 
 const testInstanceCols = [
   {
@@ -79,6 +80,7 @@ const LandingPage = ({ history }) => {
                   ...instance,
                   key: instance.ID,
                   CreatedAt: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
+                  Status: <Status text={instance.Status} />
                 };
               })}
               onRow={(record,) => ({onClick: () => { history.push(`test-instance-details/${record.ID}`); } })}
@@ -96,6 +98,7 @@ const LandingPage = ({ history }) => {
                   ...instance,
                   key: instance.ID,
                   CreatedAt: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
+                  Status: <Status text={instance.Status} />
                 };
               })}
               onRow={(record,) => ({onClick: () => { history.push(`test-instance-details/${record.ID}`); } })}

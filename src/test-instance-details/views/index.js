@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { PageHeader, Button, Space, Typography, Descriptions, Badge, Card, Modal } from 'antd';
+import { PageHeader, Button, Space, Typography, Descriptions, Badge, Card } from 'antd';
 import moment from 'moment';
 
 import {
@@ -10,7 +10,10 @@ import {
 } from '@ant-design/icons';
 
 import Page from '../../common/views/Page';
+import Status from '../../common/views/Status';
 import TestInstance from '../../model/test-instance';
+
+import '../styles/index.css';
 
 const { Title } = Typography;
 
@@ -21,25 +24,23 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       super(props);
       this.state = {
         ready: false,
-        metricsModalVisible: false,
-        metrics: null,
       };
     }
 
-    openMetricsModal = (metrics) => {
-      this.setState({metricsModalVisible: true, metrics: metrics});
-    }
-
-    closeMetricsModal = () => {
-      this.setState({metricsModalVisible: false, metrics: null});
-    }
-  
     pauseButtonClicked = () => {
       console.log("Pause Button Clicked!");
     }
 
     createJobResultUI = (key, jobResult) => {
       console.log(jobResult);
+      const latencies = jobResult.latencies;
+      const convert = l => (l / 1000000.0).toFixed(2);
+
+      const gridStyle = {
+        width: '100%',
+        textAlign: 'center',
+      };
+
       return (
         <Card
           key={key}
@@ -48,11 +49,12 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
             <Typography.Link>
               <BarChartOutlined
                 style={{"fontSize": 18}}
-                onClick={() => this.openMetricsModal(jobResult)} />
+              />
             </Typography.Link>
           }
           style={{ width: '100%' }}
         >
+          <Card.Grid style={gridStyle} hoverable={false}>
           <Descriptions>
             <Descriptions.Item label="Bytes In">{jobResult.bytes_in.total}</Descriptions.Item>
             <Descriptions.Item label="Bytes Out">{jobResult.bytes_out.total}</Descriptions.Item>
@@ -65,8 +67,19 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
             <Descriptions.Item label="Status Codes">{Object.keys(jobResult.status_codes).join(', ')}</Descriptions.Item>
             <Descriptions.Item label="Percent Success">{jobResult.success}</Descriptions.Item>
             <Descriptions.Item label="Throughput (reqs / s)">{parseFloat(jobResult.throughput).toFixed(2)}</Descriptions.Item>
-            <Descriptions.Item label="Latencies">see link</Descriptions.Item>
           </Descriptions>
+          </Card.Grid>
+          <Card.Grid style={gridStyle} hoverable={false}>
+          <Descriptions>
+            <Descriptions.Item label="Latency min (ms)">{convert(latencies.min)}</Descriptions.Item>
+            <Descriptions.Item label="Latency 50th (ms)">{convert(latencies['50th'])}</Descriptions.Item>
+            <Descriptions.Item label="Latency 90th (ms)">{convert(latencies['90th'])}</Descriptions.Item>
+            <Descriptions.Item label="Latency 95th (ms)">{convert(latencies['95th'])}</Descriptions.Item>
+            <Descriptions.Item label="Latency 99th (ms)">{convert(latencies['99th'])}</Descriptions.Item>
+            <Descriptions.Item label="Latency max (ms)">{convert(latencies.max)}</Descriptions.Item>
+            <Descriptions.Item label="Latency total (ms)">{convert(latencies.total)}</Descriptions.Item>
+          </Descriptions>
+          </Card.Grid>
         </Card>
       );
     }
@@ -134,7 +147,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                     </Link>
                   </Descriptions.Item>
                   <Descriptions.Item label="Status">
-                    <Badge status='success' text={instance.Status} />
+                    <Status text={instance.Status} />
                   </Descriptions.Item>
                   <Descriptions.Item label="Created At">
                     {moment.unix(instance.CreatedAt).format('YYYY-MM-DD')}
@@ -162,14 +175,6 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                   }
                 </Space>
               </div>
-              <Modal
-                title="Success and Latency Metrics"
-                visible={metricsModalVisible}
-                onOk={this.closeMetricsModal}
-                onCancel={this.closeMetricsModal}
-              >
-                <p>Are you sure you want to start a new test instance?</p>
-              </Modal>
             </Space>
           }
         />

@@ -22,6 +22,7 @@ import Page from '../../common/views/Page';
 import Test from '../../model/test';
 import TestInstance from '../../model/test-instance';
 import TestSchedule from '../../model/test-schedule';
+import Status from '../../common/views/Status';
 
 import '../styles/index.css';
 
@@ -183,7 +184,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
 
   handleRowClick = (e, record) => {
     const { history, location } = this.props;
-    if (record.status === "Done") {
+    if (record.status === "done") {
       history.push(`/test-instance-details/${record.id}`, {from: location.pathname});
     }
   }
@@ -231,7 +232,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
         name: instance.TestID,
         type: instance.Type,
         created: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
-        status: instance.Status.charAt(0).toUpperCase() + instance.Status.slice(1),
+        status: <Status text={instance.Status} />
       }));
     
     let jobPanels = null;
