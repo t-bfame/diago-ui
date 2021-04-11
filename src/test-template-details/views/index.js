@@ -179,7 +179,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
 
   handleRowClick = (e, record) => {
     const { history, location } = this.props;
-    if (record.status.props.text === "done" || record.status.props.text === "submitted") {
+    if (record.debugStatus === "done" || record.debugStatus === "submitted") {
       history.push(`/test-instance-details/${record.id}`, {from: location.pathname});
     }
   }
@@ -229,8 +229,9 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
         id: instance.ID,
         name: instance.TestID,
         type: <Status text={instance.Type} />,
-        created: <Date date={instance.CreatedAt} />,
-        status: instance.Error ? <Popover placement="left" content={"Error: " + instance.Error}><div><Status text={instance.Status} /></div></Popover> : <Status text={instance.Status} />
+        created: <Date date={instance.CreatedAt.toString()} />,
+        status: instance.Error ? <Popover placement="left" content={"Error: " + instance.Error}><div><Status text={instance.Status} /></div></Popover> : <Status text={instance.Status} />,
+        debugStatus: instance.Status,
       }));
     
     let jobPanels = null;

@@ -97,7 +97,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
               <Statistic title="Status codes" value={" "} formatter={
                 (value) => Object.keys(jobResult.status_codes).map(
                   (code) => (
-                    <Tooltip title={errCodeStringMap[code]}>
+                    <Tooltip key={code} title={errCodeStringMap[code]}>
                       <Badge 
                         count={code + ": " + jobResult.status_codes[code]} 
                         style={{ backgroundColor: code >= 200 && code <= 299 ? '#87d068' : "#f50" }} 
@@ -210,7 +210,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                       <Statistic title="Instance ID" value={instance.ID} suffix=""/>
                     </Descriptions.Item>
                     <Descriptions.Item>
-                      <Statistic title="Instance ID" value={instance.TestID} formatter={(value) => {
+                      <Statistic title="Test ID" value={instance.TestID} formatter={(value) => {
                         return <Link to={{
                           pathname: `/test-template-details/${value}`,
                           state: {from: location.pathname}

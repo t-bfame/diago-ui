@@ -83,6 +83,12 @@ const LandingPage = ({ history, location }) => {
     history.push('create-test-template', {from: location.pathname});
   }
 
+  const handleRowClick = (record) => {
+    if (record.debugStatus !== "failed") {
+      history.push(`test-instance-details/${record.ID}`);
+    }
+  }
+
   const testInstances = useSelector(state => state.model['test-instances']);
   return (
     <Page
@@ -132,9 +138,11 @@ const LandingPage = ({ history, location }) => {
                   TestID: <Typography.Link to={{pathname: `/test-template-details/${instance.TestID}`, state: {from: location.pathname}}}>{instance.TestID}</Typography.Link>,
                   Type: <Status text={instance.Type} />,
                   CreatedAt: <Date date={instance.CreatedAt} />,
-                  Status: <Status text={instance.Status} />
+                  Status: <Status text={instance.Status} />,
+                  debugStatus: instance.Status,
                 };
               })}
+              onRow={(record,) => ({onClick: () => { handleRowClick(record); }})}
             />
           </div>
           <div>
@@ -152,9 +160,11 @@ const LandingPage = ({ history, location }) => {
                   TestID: <Typography.Link to={{pathname: `/test-template-details/${instance.TestID}`, state: {from: location.pathname}}}>{instance.TestID}</Typography.Link>,
                   Type: <Status text={instance.Type} />,
                   CreatedAt: <Date date={instance.CreatedAt} />,
-                  Status: <Status text={instance.Status} />
+                  Status: <Status text={instance.Status} />,
+                  debugStatus: instance.Status,
                 };
               })}
+              onRow={(record,) => ({onClick: () => { handleRowClick(record); }})}
             />
           </div>
         </Space>
