@@ -9,7 +9,7 @@ export default class TestSchedule extends Document {
   }
 
   static async forTestId(testId) {
-    const response = await getClient().get(`${this.docName()}/${testId}`);
+    const response = await getClient().get(`${this.docName()}?testid=${testId}`);
     if (response.data?.success) {
       const docs = response.data?.payload.map(raw => new this(raw));
       store.dispatch({
