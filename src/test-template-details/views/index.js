@@ -23,6 +23,8 @@ import Test from '../../model/test';
 import TestInstance from '../../model/test-instance';
 import TestSchedule from '../../model/test-schedule';
 import Status from '../../common/views/Status';
+import Graph from '../../common/views/Graph';
+import Date from '../../common/views/Date';
 
 import '../styles/index.css';
 
@@ -36,17 +38,12 @@ const testInstanceTableColumns = [
     key: 'id',
   },
   {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
     title: 'Type',
     dataIndex: 'type',
     key: 'type',
   },
   {
-    title: 'Creation Date',
+    title: 'Start time',
     dataIndex: 'created',
     key: 'created',
   },
@@ -184,7 +181,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
 
   handleRowClick = (e, record) => {
     const { history, location } = this.props;
-    if (record.status === "done") {
+    if (record.status.props.text === "done") {
       history.push(`/test-instance-details/${record.id}`, {from: location.pathname});
     }
   }
@@ -206,15 +203,23 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
       title: "Test Template Details",
       subTitle: "manage everything related to a test template!",
       extra: (
-        <Button key="1" type="primary" onClick={() => {
-          this.setState({
-            submitTestModalVisible: true,
-          });
-        }}>
-          Start Test Instance
-        </Button>
+        <div>
+          <Button key="1" type="primary" onClick={() => {
+            this.setState({
+              submitTestModalVisible: true,
+            });
+          }}>
+            Start Test Instance
+          </Button>
+          <Button key="2" style={{"marginLeft": 14}}>
+            Edit Test Template
+          </Button>          
+        </div>
+
       ),
     };
+
+    console.log(test);
 
     const header = location.state
       ? (
@@ -230,8 +235,8 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
         key: instance.ID,
         id: instance.ID,
         name: instance.TestID,
-        type: instance.Type,
-        created: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
+        type: <Status text={instance.Type} />,
+        created: <Date date={instance.CreatedAt} />,
         status: <Status text={instance.Status} />
       }));
     
@@ -258,19 +263,23 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
           CustomPageHeader={header}
           CustomPageContent={test === undefined ? <></> : (
             <Space direction="vertical" size='large' style={{ 'width': '100%' }}>
+              <Graph minimized={true} testId={id} />
               <div>
-                <Title type="secondary" level={4}>
-                  Test Instances
+                <Title level={4}>
+                  Executions
                 </Title>
                 <Table
+                  size={"small"}
                   columns={testInstanceTableColumns}
+                  locale={{"emptyText": "No test instances have been run"}}
+                  pagination={{"defaultPageSize": 5, "pageSize": 5, "size": "small"}}
                   dataSource={testInstanceData}
                   onRow={(record, rowIndex) => {
                     return {onClick: e => this.handleRowClick(e, record)};
                   }}
                 />
               </div>
-              <div>
+              {/* <div>
                 <Title type="secondary" level={4}>
                   Configs
                 </Title>
@@ -288,11 +297,11 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
                 <Collapse bordered={false}>
                   {jobPanels}
                 </Collapse>
-              </div>
+              </div> */}
               <div>
                 <Row justify='space-between'>
                   <Col>
-                    <Title type="secondary" level={4}>
+                    <Title level={4}>
                       Test Schedule
                     </Title>
                   </Col>
@@ -303,7 +312,10 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
                   </Col>
                 </Row>
                 <Table
+                  size={"small"}
                   columns={testSchedulesTableColumns}
+                  locale={{"emptyText": "No test schedules have been created"}}
+                  pagination={{"defaultPageSize": 5, "pageSize": 5, "size": "small"}}
                   dataSource={
                     scheduleIds
                       .map(id => testSchedules.get(id))

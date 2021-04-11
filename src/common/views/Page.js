@@ -34,11 +34,17 @@ class Page extends Component {
   render() {
     const { CustomPageHeader, CustomPageContent, currentPage } = this.props;
     const { collapsed } = this.state;
-    const siteTitleText = collapsed ? 'D' : <img className='logo' src={Logo} alt="Diago" />
+    const siteTitleText = collapsed ? <img className='logo' src={Logo} alt="Diago" /> : <img className='logo' src={Logo} alt="Diago" />
     
     return (
-      <Layout style={{ minHeight: '100vh' }}>
-        <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
+      <Layout>
+        <Sider style={{
+        overflow: 'auto',
+        height: '100vh',
+        position: 'sticky',
+        left: 0,
+        top: 0,
+      }} collapsed={collapsed} onCollapse={this.onCollapse}>
           <div className="logo-container">
             <Title
               level={3}
@@ -54,9 +60,9 @@ class Page extends Component {
             <Menu.Item key="/" icon={<PieChartOutlined />}>
               Home
             </Menu.Item>
-            <Menu.Item key="/tests" icon={<DesktopOutlined />}>
+            {/* <Menu.Item key="/tests" icon={<DesktopOutlined />}>
               Test Templates
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item key="/resources" icon={<TeamOutlined />} title="Team">
               Resources
             </Menu.Item>

@@ -1,25 +1,43 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Badge }  from 'antd';
+import { Tag }  from 'antd';
+import {
+  SyncOutlined,
+} from '@ant-design/icons';
 
 class Status extends Component {
   render() {
     const { text } = this.props;
-    let status = "default";
+
+    let status = text;
+    let color = "geekblue";
+    let showProcessing = false;
+
     switch (text) {
         case "done":
-            status = "success";
+            status = "Success";
+            color = "#87d068";
             break;
         case "submitted":
-            status = "processing";
+            status = "Processing";
+            color = "#2db7f5";
+            showProcessing = true;
             break;
         case "failed":
-            status = "error";
+            status = "Error";
+            color = "#f50";
             break;
-    }
+        case "adhoc":
+            status = "Adhoc";
+            color = "blue";
+			break;
+		case "scheduled":
+            status = "Scheduled";
+            color = "blue";
+	}
     
     return (
-        <Badge status={status} text={text} />
+        <Tag icon={showProcessing ? <SyncOutlined spin /> : null} color={color}>{status}</Tag>
     );
   }
 }

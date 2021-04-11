@@ -1,0 +1,37 @@
+.value-title-style {
+    .ant-statistic-title {
+        font-size: 12px;
+    }
+
+    .ant-statistic-content {
+        font-size: 14px;
+    }
+
+    .ant-statistic {
+        padding-top: 2px;
+    }
+
+    .ant-badge:not(:first-child) {
+        margin-left: 6px;
+    }
+}
+
+.value-metadata-style {
+    .ant-statistic-title {
+        font-size: 14px;
+    }
+
+    .ant-statistic-content {
+        font-size: 18px;
+    }
+
+    .ant-statistic {
+        padding-top: 2px;
+    }
+
+    .ant-tag {
+        font-size: 16px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+}
