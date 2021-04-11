@@ -7,6 +7,7 @@ import TestInstance from './model/test-instance';
 import { PageHeader, Space, Typography, Table, AutoComplete, Button } from 'antd';
 import Page from './common/views/Page';
 import Status from './common/views/Status';
+import Date from './common/views/Date';
 
 import {
   SearchOutlined
@@ -21,7 +22,7 @@ const testInstanceCols = [
     key: 'ID',
   },
   {
-    title: "Test Template ID",
+    title: "Test Template",
     dataIndex: 'TestID',
     key: 'TestID',
   },
@@ -36,7 +37,7 @@ const testInstanceCols = [
     key: 'Status',
   },
   {
-    title: "Created At",
+    title: "Started At",
     dataIndex: 'CreatedAt',
     key: "CreatedAt",
   },
@@ -118,7 +119,7 @@ const LandingPage = ({ history, location }) => {
             </AutoComplete>
           </Space>
           <div>
-            <Typography.Title type="secondary" level={4}>
+            <Typography.Title level={5}>
               Active
             </Typography.Title>
             <Table
@@ -127,8 +128,9 @@ const LandingPage = ({ history, location }) => {
                 const instance = testInstances.get(id)
                 return {
                   ...instance,
+                  TestID: <Typography.Link to={{pathname: `/test-template-details/${instance.TestID}`, state: {from: location.pathname}}}>{instance.TestID}</Typography.Link>,
                   key: instance.ID,
-                  CreatedAt: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
+                  CreatedAt: <Date date={moment.unix(instance.CreatedAt)} />,
                   Status: <Status text={instance.Status} />
                 };
               })}
@@ -136,7 +138,7 @@ const LandingPage = ({ history, location }) => {
             />
           </div>
           <div>
-            <Typography.Title type="secondary" level={4}>
+            <Typography.Title level={5}>
               Finished
             </Typography.Title>
             <Table
@@ -146,7 +148,9 @@ const LandingPage = ({ history, location }) => {
                 return {
                   ...instance,
                   key: instance.ID,
-                  CreatedAt: moment.unix(instance.CreatedAt).format('YYYY-MM-DD'),
+                  TestID: <Typography.Link to={{pathname: `/test-template-details/${instance.TestID}`, state: {from: location.pathname}}}>{instance.TestID}</Typography.Link>,
+                  Type: <Status text={instance.Type} />,
+                  CreatedAt: <Date date={moment.unix(instance.CreatedAt)} />,
                   Status: <Status text={instance.Status} />
                 };
               })}

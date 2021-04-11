@@ -258,7 +258,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
             <Space direction="vertical" size='large' style={{ 'width': '100%' }}>
               <Graph minimized={true} testId={id} />
               <div>
-                <Title level={4}>
+                <Title level={5}>
                   Executions
                 </Title>
                 <Table
@@ -275,7 +275,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
               <div>
                 <Row justify='space-between'>
                   <Col>
-                    <Title level={4}>
+                    <Title level={5}>
                       Test Schedule
                     </Title>
                   </Col>
