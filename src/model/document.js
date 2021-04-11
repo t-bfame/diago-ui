@@ -32,7 +32,7 @@ export default class Document {
   }
 
   static async all() {
-    const response = await getClient().get(`${this.docName()}/all`);
+    const response = await getClient().get(`${this.docName()}`);
     if (response.data?.success) {
       const docs = response.data?.payload.map(raw => new this(raw));
       store.dispatch({

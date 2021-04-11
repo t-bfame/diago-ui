@@ -9,7 +9,7 @@ export default class Test extends Document {
   }
 
   static async forPrefix(prefix) {
-    const response = await getClient().get(`${this.docName()}/${prefix}*`);
+    const response = await getClient().get(`${this.docName()}?prefix=${prefix}`);
     if (response.data?.success) {
       const docs = response.data?.payload.map(raw => new this(raw));
       store.dispatch({
@@ -25,7 +25,7 @@ export default class Test extends Document {
   }
 
   async start() {
-    const response = await getClient().get(`start-test/${this.ID}`);
+    const response = await getClient().post(`${Test.docName()}/${this.ID}/start`);
     return response;
   }
 }
