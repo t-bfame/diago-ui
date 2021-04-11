@@ -1,6 +1,11 @@
-.logo {
+.logo-container {
     height: 32px;
-    margin: 32px;
+    margin: 46px 32px 58px 32px;
+}
+
+.logo {
+    max-width: 100%;
+    max-height: 60px;
 }
   
 .site-layout .site-layout-background {

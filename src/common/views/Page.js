@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 
 import '../styles/index.css';
+import Logo from './logo.svg';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Title } = Typography;
@@ -33,12 +34,12 @@ class Page extends Component {
   render() {
     const { CustomPageHeader, CustomPageContent, currentPage } = this.props;
     const { collapsed } = this.state;
-    const siteTitleText = collapsed ? 'D' : 'Diago';
+    const siteTitleText = collapsed ? 'D' : <img className='logo' src={Logo} alt="Diago" />
     
     return (
       <Layout style={{ minHeight: '100vh' }}>
         <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
-          <div className="logo">
+          <div className="logo-container">
             <Title
               level={3}
               style={{
