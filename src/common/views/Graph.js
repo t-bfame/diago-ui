@@ -50,7 +50,7 @@ class Graph extends Component {
             <div style={{"width": "100%"}}>
                 <div style={{"textAlign": "right", "marginBottom": "6px", "width": "100%"}}>
                     <Typography.Link href={dashLink} target="_blank">
-                        <Tooltip title={"Open in Grafana"}>
+                        <Tooltip placement="left" title={"Open in Grafana"}>
                             <BarChartOutlined
                                 style={{"fontSize": 20}}
                             />

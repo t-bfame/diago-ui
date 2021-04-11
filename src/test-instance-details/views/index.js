@@ -5,12 +5,7 @@ import PropTypes from 'prop-types';
 import { PageHeader, Button, Space, Typography, Descriptions, Badge, Card, Statistic, Tooltip, Divider } from 'antd';
 import moment from 'moment';
 
-import {
-  BarChartOutlined
-} from '@ant-design/icons';
-
 import Page from '../../common/views/Page';
-import Date from '../../common/views/Date';
 import Graph from '../../common/views/Graph';
 import Status from '../../common/views/Status';
 import TestInstance from '../../model/test-instance';
@@ -29,34 +24,59 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       };
     }
 
-    pauseButtonClicked = () => {
-      console.log("Pause Button Clicked!");
+    createChaosResultUI = (key, chaosResult) => {
+      return (
+        <Card
+          key={key}
+          title={<Text>{`Chaos ${key}`}</Text>}
+          style={{ width: '100%' }}
+        >
+  
+          <Descriptions className="value-title-style" column={4}>
+            <Descriptions.Item><Statistic title="Status" formatter={(value) => <Status text={value} />} value={(chaosResult.Status)}/></Descriptions.Item>
+          </Descriptions>
+  
+          {chaosResult.Error ? <Descriptions className="value-title-style" column={4}>
+            <Descriptions.Item><Statistic title="Error Message" value={chaosResult.Error}/></Descriptions.Item>
+          </Descriptions>  : null}
+
+          {chaosResult.DeletedPods ? <Descriptions className="value-title-style" column={4}>
+            <Descriptions.Item>
+              <Statistic title="Deleted Pods" value={chaosResult.DeletedPods} formatter={() => {
+                return chaosResult.DeletedPods.map((podName) => <Status text={podName} />)
+              }} />
+            </Descriptions.Item>
+          </Descriptions>  : null}
+  
+        </Card>
+    )
     }
 
+
     createJobResultUI = (key, jobResult) => {
-      console.log(jobResult);
       const latencies = jobResult.latencies;
-      const convert = l => (l / 1000000.0).toFixed(2);
+      const convert = l => {
+        let dur = moment.duration(l / 1000000.0);
+        return (dur.asSeconds() > 1 ? dur.asSeconds() : dur.asMilliseconds()).toFixed(2);
+      };
+
+      const convertUnit = l => {
+        let dur = moment.duration(l / 1000000.0);
+        return (dur.asSeconds() > 1 ? "s" : "ms");
+      };
 
       let errCodeStringMap = {};
       if(jobResult.errors) {
         jobResult.errors.forEach((err) => {
           let spl = err.split(" ")
           errCodeStringMap[parseInt(spl[0])] = err; 
-        })  
+        })
       }
 
       return (
         <Card
           key={key}
           title={<Text>{`Job ${key}`}</Text>}
-          extra={
-            <Typography.Link>
-              <BarChartOutlined
-                style={{"fontSize": 18}}
-              />
-            </Typography.Link>
-          }
           style={{ width: '100%' }}
         >
 
@@ -89,16 +109,16 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
           </Descriptions>
 
           <Descriptions className="value-title-style" column={4}>
-            <Descriptions.Item><Statistic title="Latency total" value={convert(latencies.total)} suffix=""/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Latency min" value={convert(latencies.min)} suffix=""/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Latency max" value={convert(latencies.max)} suffix=""/></Descriptions.Item>
+            <Descriptions.Item><Statistic title="Latency total" value={convert(latencies.total)} suffix={convertUnit(latencies.total)}/></Descriptions.Item>
+            <Descriptions.Item><Statistic title="Latency min" value={convert(latencies.min)} suffix={convertUnit(latencies.min)}/></Descriptions.Item>
+            <Descriptions.Item><Statistic title="Latency max" value={convert(latencies.max)} suffix={convertUnit(latencies.max)}/></Descriptions.Item>
           </Descriptions>
           
           <Descriptions className="value-title-style" column={4}>
-            <Descriptions.Item><Statistic title="Latency 50th" value={convert(latencies['50th'])} suffix=""/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Latency 90th" value={convert(latencies['90th'])} suffix=""/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Latency 95th" value={convert(latencies['95th'])} suffix=""/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Latency 99th" value={convert(latencies['99th'])} suffix=""/></Descriptions.Item>
+            <Descriptions.Item><Statistic title="Latency 50th" value={convert(latencies['50th'])} suffix={convertUnit(latencies['50th'])}/></Descriptions.Item>
+            <Descriptions.Item><Statistic title="Latency 90th" value={convert(latencies['90th'])} suffix={convertUnit(latencies['90th'])}/></Descriptions.Item>
+            <Descriptions.Item><Statistic title="Latency 95th" value={convert(latencies['95th'])} suffix={convertUnit(latencies['95th'])}/></Descriptions.Item>
+            <Descriptions.Item><Statistic title="Latency 99th" value={convert(latencies['99th'])} suffix={convertUnit(latencies['99th'])}/></Descriptions.Item>
           </Descriptions>
 
           <Descriptions className="value-title-style" column={4}>
@@ -112,21 +132,25 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
 
     createGraphResultUI = (instance) => {
 
-      let start = null;
-      let end = null;
+      let start = moment(instance.CreatedAt * 1000);
+      let end = moment();
 
-      console.log(instance);
+      if (instance.Metrics) {
+        start = null;
+        end = null;
+        
+        Object.keys(instance.Metrics).forEach(key => {
+          let curStart = moment(instance.Metrics[key].earliest);
+          let curEnd = moment(instance.Metrics[key].latest);
+  
+          start = start === null ? curStart : moment.max(curStart, start);
+          end = end === null ? curEnd : moment.max(curEnd, end);
+        });
 
-      Object.keys(instance.Metrics).forEach(key => {
-        let curStart = moment(instance.Metrics[key].earliest);
-        let curEnd = moment(instance.Metrics[key].latest);
-
-        start = start === null ? curStart : moment.max(curStart, start);
-        end = end === null ? curEnd : moment.max(curEnd, end);
-      });
+        end = end.add(1, 'minutes');
+      }
 
       start = start.subtract(1, 'minutes');
-      end = end.add(1, 'minutes');
 
       let from = start.unix() * 1000;
       let to = end.unix() * 1000;
@@ -215,6 +239,15 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                   {
                     instance.Metrics
                     ? Object.keys(instance.Metrics).map(key => this.createJobResultUI(key, instance.Metrics[key]))
+                    : null
+                  }
+                </Space>
+              </div>
+              <div>
+                <Space direction="vertical" size='small' style={{ 'width': '100%' }}>
+                  {
+                    instance.ChaosResult
+                    ? Object.keys(instance.ChaosResult).map(key => this.createChaosResultUI(key, instance.ChaosResult[key]))
                     : null
                   }
                 </Space>

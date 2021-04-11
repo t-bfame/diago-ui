@@ -12,7 +12,7 @@ import {
   Modal,
   Row,
   Col,
-  Card,
+  Popover,
   Descriptions,
   Collapse,
 } from 'antd';
@@ -181,7 +181,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
 
   handleRowClick = (e, record) => {
     const { history, location } = this.props;
-    if (record.status.props.text === "done") {
+    if (record.status.props.text === "done" || record.status.props.text === "submitted") {
       history.push(`/test-instance-details/${record.id}`, {from: location.pathname});
     }
   }
@@ -194,9 +194,6 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
       submitTestModalVisible, submitTestModalLoading, instanceIds, scheduleIds, showTestScheduleModal,
     } = this.state;
     const { id } = match.params;
-    console.log('Id of test template is:', id);
-    console.log('Test template:', test);
-    console.log('Test instances:', testInstances);
 
     const headerProps = {
       className: "site-page-header",
@@ -219,8 +216,6 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
       ),
     };
 
-    console.log(test);
-
     const header = location.state
       ? (
         <PageHeader
@@ -237,7 +232,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
         name: instance.TestID,
         type: <Status text={instance.Type} />,
         created: <Date date={instance.CreatedAt} />,
-        status: <Status text={instance.Status} />
+        status: instance.Error ? <Popover placement="left" content={"Error: " + instance.Error}><div><Status text={instance.Status} /></div></Popover> : <Status text={instance.Status} />
       }));
     
     let jobPanels = null;
@@ -279,25 +274,6 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
                   }}
                 />
               </div>
-              {/* <div>
-                <Title type="secondary" level={4}>
-                  Configs
-                </Title>
-                <Card
-                  size='small'
-                  style={{ width: '100%' }}
-                  className='test-template-basic-info'
-                >
-                  <Descriptions>
-                    <Descriptions.Item label="Name">{test.Name}</Descriptions.Item>
-                    <Descriptions.Item label="Number of jobs">{test.Jobs.length}</Descriptions.Item>
-                    <Descriptions.Item label="Creation date">{moment().format('YYYY-MM-DD')}</Descriptions.Item>
-                  </Descriptions>
-                </Card>
-                <Collapse bordered={false}>
-                  {jobPanels}
-                </Collapse>
-              </div> */}
               <div>
                 <Row justify='space-between'>
                   <Col>

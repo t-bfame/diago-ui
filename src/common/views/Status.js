@@ -15,6 +15,7 @@ class Status extends Component {
 
     switch (text) {
         case "done":
+        case "success":
             status = "Success";
             color = "#87d068";
             break;
