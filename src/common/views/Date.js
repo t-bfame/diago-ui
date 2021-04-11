@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import moment from 'moment';
 
 class Date extends Component {
@@ -14,7 +13,6 @@ class Date extends Component {
 }
 
 Date.propTypes = {
-  date: PropTypes.string.isRequired,
 };
 
 export default Date;

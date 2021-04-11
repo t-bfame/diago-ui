@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import moment from 'moment';
 
 import Test from './model/test';
 import TestInstance from './model/test-instance';
@@ -128,13 +127,14 @@ const LandingPage = ({ history, location }) => {
                 const instance = testInstances.get(id)
                 return {
                   ...instance,
-                  TestID: <Typography.Link to={{pathname: `/test-template-details/${instance.TestID}`, state: {from: location.pathname}}}>{instance.TestID}</Typography.Link>,
                   key: instance.ID,
-                  CreatedAt: <Date date={moment.unix(instance.CreatedAt)} />,
+                  ID: <Typography.Link to={{pathname: `/test-instance-details/${instance.ID}`, state: {from: location.pathname}}}>{instance.ID}</Typography.Link>,
+                  TestID: <Typography.Link to={{pathname: `/test-template-details/${instance.TestID}`, state: {from: location.pathname}}}>{instance.TestID}</Typography.Link>,
+                  Type: <Status text={instance.Type} />,
+                  CreatedAt: <Date date={instance.CreatedAt} />,
                   Status: <Status text={instance.Status} />
                 };
               })}
-              onRow={(record,) => ({onClick: () => { history.push(`test-instance-details/${record.ID}`); } })}
             />
           </div>
           <div>
@@ -148,13 +148,13 @@ const LandingPage = ({ history, location }) => {
                 return {
                   ...instance,
                   key: instance.ID,
+                  ID: <Typography.Link to={{pathname: `/test-instance-details/${instance.ID}`, state: {from: location.pathname}}}>{instance.ID}</Typography.Link>,
                   TestID: <Typography.Link to={{pathname: `/test-template-details/${instance.TestID}`, state: {from: location.pathname}}}>{instance.TestID}</Typography.Link>,
                   Type: <Status text={instance.Type} />,
-                  CreatedAt: <Date date={moment.unix(instance.CreatedAt)} />,
+                  CreatedAt: <Date date={instance.CreatedAt} />,
                   Status: <Status text={instance.Status} />
                 };
               })}
-              onRow={(record,) => ({onClick: () => { history.push(`test-instance-details/${record.ID}`); } })}
             />
           </div>
         </Space>
