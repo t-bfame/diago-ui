@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import LandingPage from './LandingPage';
-import MainPage from './main/views';
 import CreateTestTemplatePage from './main/views/CreateTestTemplatePage';
 import TestTemplateDetailsPage from './test-template-details/views';
 import TestInstanceDetailsPage from './test-instance-details/views';

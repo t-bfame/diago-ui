@@ -7,8 +7,6 @@ class Date extends Component {
     const { date } = this.props;
     var data = moment.unix(date).format('h:mm:ss a, MM-DD-YY')
 
-    console.log(new Date(date), data);
-
     return (
         <div>{data}</div>
     );

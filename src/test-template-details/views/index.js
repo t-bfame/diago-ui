@@ -16,7 +16,6 @@ import {
   Descriptions,
   Collapse,
 } from 'antd';
-import moment from 'moment';
 
 import Page from '../../common/views/Page';
 import Test from '../../model/test';
@@ -166,7 +165,6 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
       CronSpec: cronspec,
     })
     const { docs } = await TestSchedule.forTestId(test.ID);
-    console.log(response);
     this.setState({
       scheduleIds: docs.map(doc => doc.ID),
       testScheduleModalLoading: false,

@@ -31,11 +31,14 @@ class Status extends Component {
         case "adhoc":
             status = "Adhoc";
             color = "blue";
-			break;
-		case "scheduled":
+    		  	break;
+		    case "scheduled":
             status = "Scheduled";
             color = "blue";
-	}
+            break;
+        default:
+            color = "geekblue";
+  }
     
     return (
         <Tag icon={showProcessing ? <SyncOutlined spin /> : null} color={color}>{status}</Tag>

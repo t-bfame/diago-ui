@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Card, Radio, Typography, Tooltip } from 'antd';
 import moment from 'moment';
 import {

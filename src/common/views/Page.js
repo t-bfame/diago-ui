@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { Layout, Menu, Typography }  from 'antd';
 import {
-  DesktopOutlined,
   PieChartOutlined,
   TeamOutlined,
 } from '@ant-design/icons';

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { PageHeader, Button, Space, Typography, Descriptions, Badge, Card, Statistic, Tooltip, Divider } from 'antd';
+import { PageHeader, Space, Typography, Descriptions, Badge, Card, Statistic, Tooltip } from 'antd';
 import moment from 'moment';
 
 import Page from '../../common/views/Page';
@@ -138,7 +138,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       if (instance.Metrics) {
         start = null;
         end = null;
-        
+
         Object.keys(instance.Metrics).forEach(key => {
           let curStart = moment(instance.Metrics[key].earliest);
           let curEnd = moment(instance.Metrics[key].latest);
@@ -175,14 +175,13 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
     render() {
       const { match, location, testInstances } = this.props;
       const { id } = match.params;
-      const { ready, metricsModalVisible } = this.state;
+      const { ready } = this.state;
 
       if (!ready) {
         return null;
       }
 
       const instance = testInstances.get(id);
-      console.log(instance.Metrics);
 
       const headerProps = {
         className: "site-page-header",
