@@ -60,7 +60,7 @@ const DynamicChaosField = props => {
               >
                 <Input placeholder='example: 10' />
               </Form.Item>
-              {index !== 0 && fields.length > 1 ? (
+              {index === fields.length - 1 ? (
                 <Form.Item {...tailLayout}>
                   <Button
                     type="danger"
