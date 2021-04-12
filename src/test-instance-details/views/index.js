@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { PageHeader, Breadcrumb, Space, Typography, Descriptions, Badge, Card, Statistic, Tooltip, } from 'antd';
+import { PageHeader, Breadcrumb, Space, Typography, Descriptions, Badge, Card, Statistic, Tooltip, Button} from 'antd';
 import moment from 'moment';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
@@ -260,7 +260,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
             </Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
-            {id.split("-").slice(1).pop()}
+            {id}
           </Breadcrumb.Item>
         </Breadcrumb>
       );
@@ -269,6 +269,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
         className: "site-page-header",
         title: breadcrumb,
         subTitle: `view test instance details!`,
+        extra: <Button key="1" onClick={() => {console.log("call stop")}} type="primary" danger disabled={instance.Status !== "submitted"}>Stop Test Instance</Button>, 
       };
 
       // TODO: Add tooltip with information about metric fields

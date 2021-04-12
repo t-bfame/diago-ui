@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import Test from './model/test';
 import TestInstance from './model/test-instance';
-import { PageHeader, Space, Typography, Table, AutoComplete, Button } from 'antd';
+import { PageHeader, Space, Typography, Table, AutoComplete, Breadcrumb, Button } from 'antd';
 import Page from './common/views/Page';
 import Status from './common/views/Status';
 import Date from './common/views/Date';
@@ -85,24 +85,31 @@ const LandingPage = ({ history, location }) => {
 
   const handleRowClick = (record) => {
     if (record.debugStatus !== "failed") {
-      history.push(`test-instance-details/${record.ID}`);
+      // history.push(`test-instance-details/${record.ID}`);
     }
   }
 
   const testInstances = useSelector(state => state.model['test-instances']);
+
+  const breadcrumb = (
+    <Breadcrumb>
+      <Breadcrumb.Item>
+        Home
+      </Breadcrumb.Item>
+    </Breadcrumb>
+  );
+
+  const headerProps = {
+    className: "site-page-header",
+    title: breadcrumb,
+    subTitle: `view recent test instances!`,
+    extra: <Button key="1" type="primary" onClick={goToCreateTestTemplatePage}>Create Test Template</Button>, 
+  };
+
+
   return (
     <Page
-      CustomPageHeader={
-        <PageHeader
-          className="site-page-header"
-          title="Recent Test Instances"
-          extra={
-            <Button key="1" type="primary" onClick={goToCreateTestTemplatePage}>
-              Create Test Template
-            </Button>
-          }  
-        />
-      }
+      CustomPageHeader={<PageHeader {...headerProps} />}
       CustomPageContent={
         <Space direction="vertical" size='large' style={{ "width": '100%' }}>
           <Space style={{"width": '100%'}} className="search-bar">
@@ -129,13 +136,14 @@ const LandingPage = ({ history, location }) => {
             </Typography.Title>
             <Table
               columns={testInstanceCols}
+              pagination={{"defaultPageSize": 5, "pageSize": 5, "size": "small"}}
               dataSource={activeIds.map(id => {
                 const instance = testInstances.get(id)
                 return {
                   ...instance,
                   key: instance.ID,
-                  ID: <Typography.Link to={{pathname: `/test-instance-details/${instance.ID}`, state: {from: location.pathname}}}>{instance.ID}</Typography.Link>,
-                  TestID: <Typography.Link to={{pathname: `/test-template-details/${instance.TestID}`, state: {from: location.pathname}}}>{instance.TestID}</Typography.Link>,
+                  ID: <Typography.Link onClick={() => { history.push(`test-instance-details/${instance.ID}`, {from: location.pathname}) }}>{instance.ID}</Typography.Link>,
+                  TestID: <Typography.Link onClick={() => { history.push(`test-template-details/${instance.TestID}`, {from: location.pathname}) }}>{instance.TestID}</Typography.Link>,
                   Type: <Status text={instance.Type} />,
                   CreatedAt: <Date date={instance.CreatedAt} />,
                   Status: <Status text={instance.Status} />,
@@ -151,13 +159,14 @@ const LandingPage = ({ history, location }) => {
             </Typography.Title>
             <Table
               columns={testInstanceCols}
+              pagination={{"defaultPageSize": 5, "pageSize": 5, "size": "small"}}
               dataSource={finishedIds.map(id => {
                 const instance = testInstances.get(id);
                 return {
                   ...instance,
                   key: instance.ID,
-                  ID: <Typography.Link to={{pathname: `/test-instance-details/${instance.ID}`, state: {from: location.pathname}}}>{instance.ID}</Typography.Link>,
-                  TestID: <Typography.Link to={{pathname: `/test-template-details/${instance.TestID}`, state: {from: location.pathname}}}>{instance.TestID}</Typography.Link>,
+                  ID: <Typography.Link onClick={() => { history.push(`test-instance-details/${instance.ID}`, {from: location.pathname}) }}>{instance.ID}</Typography.Link>,
+                  TestID: <Typography.Link onClick={() => { history.push(`test-template-details/${instance.TestID}`, {from: location.pathname}) }}>{instance.TestID}</Typography.Link>,
                   Type: <Status text={instance.Type} />,
                   CreatedAt: <Date date={instance.CreatedAt} />,
                   Status: <Status text={instance.Status} />,
