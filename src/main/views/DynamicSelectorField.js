@@ -1,4 +1,4 @@
-import { Form, Input, Button, Space } from 'antd';
+import { Form, Input, Button, Row, Col } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 const layout = {
@@ -35,12 +35,16 @@ const DynamicSelectorField = props => {
             name={[index, "selector"]}
             fieldKey={[fieldKey, index]}
           >
-            <Space align='baseline'>
-              <Input
-                defaultValue={initialSels && index < initialSels.length ? `${initialSels[index].selector}` : null}
-                placeholder="Key:Value" />
-              {index === fields.length - 1 && <MinusCircleOutlined onClick={() => remove(name)} />}
-            </Space>
+            <Row justify="space-around" align="middle">
+              <Col span={22}>
+                <Input
+                  defaultValue={initialSels && index < initialSels.length ? `${initialSels[index].selector}` : null}
+                  placeholder="Selector Key:Value" />
+              </Col>
+              <Col span={2} style={{"textAlign": "center", "alignContent": "center"}}>
+                {index > 0 && index === fields.length - 1 && <MinusCircleOutlined onClick={() => remove(name)} />}
+              </Col>
+            </Row>
           </Form.Item>
         ))}
         <Form.Item {...tailLayout}>

@@ -28,4 +28,9 @@ export default class Test extends Document {
     const response = await getClient().post(`${Test.docName()}/${this.ID}/start`);
     return response;
   }
+
+  async stop() {
+    const response = await getClient().post(`${Test.docName()}/${this.ID}/stop`);
+    return response;
+  }
 }
