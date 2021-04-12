@@ -10,7 +10,7 @@ import { RECEIVE_DASH_META } from './reducer';
 
 class App extends Component {
   componentDidMount() {
-    getClient().get('/dashboard-metadata').then(({ data: meta }) => {
+    getClient().get('dashboard-metadata').then(({ data: meta }) => {
       store.dispatch({
         type: RECEIVE_DASH_META,
         data: {

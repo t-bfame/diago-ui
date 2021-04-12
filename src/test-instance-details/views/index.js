@@ -282,6 +282,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
         title: breadcrumb,
         subTitle: `view test instance details!`,
         extra: (
+          instance.Status !== "submitted" ? null :
           <Button
             key="1"
             onClick={() => { 
@@ -289,13 +290,12 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
             }}
             type="primary"
             danger
-            disabled={instance.Status !== "submitted"}>
-              Stop Test Instance
-            </Button>
+          >
+            Stop Test Instance
+          </Button>
         ) 
       };
-
-      // TODO: Add tooltip with information about metric fields
+      console.log(instance);
       return (
         <Page
           currentPage="/"
@@ -328,6 +328,11 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                         return <Status text={value} />
                       }}/>
                     </Descriptions.Item>
+                    {instance.Error &&
+                      <Descriptions.Item>
+                        <Statistic title="Failure Reason" value={instance.Error} />
+                      </Descriptions.Item>
+                    }
                   </Descriptions>
                 </div>
               </div>

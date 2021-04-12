@@ -20,18 +20,6 @@ const DynamicJobField = props => {
             <div key={field.key}>
               <Divider>Job {index + 1}</Divider>
               <Form.Item
-                name={[index, "name"]}
-                label="Name"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input the job name!',
-                  },
-                ]}
-              >
-                <Input placeholder="job name" />
-              </Form.Item>
-              <Form.Item
                 label="Worker Group"
                 name={[index, "group"]}
                 rules={[

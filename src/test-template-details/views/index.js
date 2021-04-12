@@ -190,9 +190,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
 
   handleRowClick = (e, record) => {
     const { history, location } = this.props;
-    if (record.debugStatus === "done" || record.debugStatus === "submitted") {
-      history.push(`/test-instance-details/${record.id}`, {from: location.pathname});
-    }
+    history.push(`/test-instance-details/${record.id}`, {from: location.pathname});
   }
 
   goToCreateTestTemplatePage = (test) => {

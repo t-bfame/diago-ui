@@ -49,7 +49,7 @@ class CreateTestTemplatePage extends Component {
       Name: name,
       Jobs: jobs.map(job => {
         return {
-          Name: job.name,
+          Name: "placeholder",
           Group: job.group,
           Priority: 0,
           Frequency: parseInt(job.frequency),

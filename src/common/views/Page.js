@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { Layout, Menu, Typography }  from 'antd';
+import { Layout, Menu, Space, Typography }  from 'antd';
 import {
   PieChartOutlined,
   GithubOutlined,
   FileSearchOutlined,
+  ExclamationCircleOutlined,
+  TagOutlined,
 } from '@ant-design/icons';
 
 import '../styles/index.css';
@@ -36,7 +38,7 @@ class Page extends Component {
   render() {
     const { CustomPageHeader, CustomPageContent, currentPage } = this.props;
     const { collapsed } = this.state;
-    const siteTitleText = collapsed ? <img className='logo' src={Logo} alt="Diago" /> : <img className='logo' src={Logo} alt="Diago" />
+    const siteTitleLogo = <img className='logo' src={Logo} alt="Diago" />;
     
     return (
       <Layout>
@@ -55,21 +57,34 @@ class Page extends Component {
                 'textAlign': 'center',
               }}
             >
-              {siteTitleText}
+              <Space direction="vertical">
+              {siteTitleLogo}
+              Diago
+              </Space>
             </Title>
           </div>
           <Menu theme="dark" defaultSelectedKeys={[currentPage]} mode="inline" onClick={this.handleNavigation}>
             <Menu.Item key="/" icon={<PieChartOutlined />}>
               Home
             </Menu.Item>
-            <Menu.Item key="/resources" icon={<GithubOutlined />}>
+            <Menu.Item key="/github" icon={<GithubOutlined />}>
               <a href="https://github.com/t-bfame">
                 Github
               </a>
             </Menu.Item>
-            <Menu.Item key="/help" icon={<FileSearchOutlined />}>
-              <a href="https://github.com/t-bfame">
-                Help
+            <Menu.Item key="/wiki" icon={<FileSearchOutlined />}>
+              <a href="https://github.com/t-bfame/diago/wiki">
+                Wiki
+              </a>
+            </Menu.Item>
+            <Menu.Item key="/issues" icon={<ExclamationCircleOutlined />}>
+              <a href="https://github.com/t-bfame/diago/issues">
+                Issues
+              </a>
+            </Menu.Item>
+            <Menu.Item key="/releases" icon={<TagOutlined />}>
+              <a href="https://github.com/t-bfame/diago/releases">
+                Releases
               </a>
             </Menu.Item>
           </Menu>

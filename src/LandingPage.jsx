@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import Test from './model/test';
 import TestInstance from './model/test-instance';
-import { PageHeader, Space, Typography, Table, AutoComplete, Breadcrumb, Button } from 'antd';
+import { PageHeader, Space, Typography, Table, AutoComplete, Breadcrumb, Button, Popover } from 'antd';
 import Page from './common/views/Page';
 import Status from './common/views/Status';
 import Date from './common/views/Date';
@@ -146,7 +146,7 @@ const LandingPage = ({ history, location }) => {
                   TestID: <Typography.Link onClick={() => { history.push(`test-template-details/${instance.TestID}`, {from: location.pathname}) }}>{instance.TestID}</Typography.Link>,
                   Type: <Status text={instance.Type} />,
                   CreatedAt: <Date date={instance.CreatedAt} />,
-                  Status: <Status text={instance.Status} />,
+                  Status: instance.Error ? <Popover placement="left" content={"Error: " + instance.Error}><div><Status text={instance.Status} /></div></Popover> : <Status text={instance.Status} />,
                   debugStatus: instance.Status,
                 };
               })}
@@ -169,7 +169,7 @@ const LandingPage = ({ history, location }) => {
                   TestID: <Typography.Link onClick={() => { history.push(`test-template-details/${instance.TestID}`, {from: location.pathname}) }}>{instance.TestID}</Typography.Link>,
                   Type: <Status text={instance.Type} />,
                   CreatedAt: <Date date={instance.CreatedAt} />,
-                  Status: <Status text={instance.Status} />,
+                  Status: instance.Error ? <Popover placement="left" content={"Error: " + instance.Error}><div><Status text={instance.Status} /></div></Popover> : <Status text={instance.Status} />,
                   debugStatus: instance.Status,
                 };
               })}
