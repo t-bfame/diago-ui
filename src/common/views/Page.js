@@ -4,7 +4,8 @@ import { withRouter } from 'react-router-dom';
 import { Layout, Menu, Typography }  from 'antd';
 import {
   PieChartOutlined,
-  TeamOutlined,
+  GithubOutlined,
+  FileSearchOutlined,
 } from '@ant-design/icons';
 
 import '../styles/index.css';
@@ -27,7 +28,9 @@ class Page extends Component {
 
   handleNavigation = e => {
     const { history } = this.props;
-    history.push(e.key);
+    if (e.key === "/") {
+      history.push(e.key);
+    }
   }
 
   render() {
@@ -59,11 +62,15 @@ class Page extends Component {
             <Menu.Item key="/" icon={<PieChartOutlined />}>
               Home
             </Menu.Item>
-            {/* <Menu.Item key="/tests" icon={<DesktopOutlined />}>
-              Test Templates
-            </Menu.Item> */}
-            <Menu.Item key="/resources" icon={<TeamOutlined />} title="Team">
-              Resources
+            <Menu.Item key="/resources" icon={<GithubOutlined />}>
+              <a href="https://github.com/t-bfame">
+                Github
+              </a>
+            </Menu.Item>
+            <Menu.Item key="/help" icon={<FileSearchOutlined />}>
+              <a href="https://github.com/t-bfame">
+                Help
+              </a>
             </Menu.Item>
           </Menu>
         </Sider>

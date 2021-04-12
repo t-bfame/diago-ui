@@ -15,7 +15,7 @@ const DynamicJobField = props => {
   return (
     <Form.List name="jobs">
       {(fields, { add, remove }) => (
-        <div>
+        <div className="form-fields">
           {fields.map((field, index) => (
             <div key={field.key}>
               <Divider>Job {index + 1}</Divider>

@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { PageHeader, Space, Typography, Descriptions, Badge, Card, Statistic, Tooltip } from 'antd';
+import { PageHeader, Breadcrumb, Space, Typography, Descriptions, Badge, Card, Statistic, Tooltip, } from 'antd';
 import moment from 'moment';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+
 
 import Page from '../../common/views/Page';
 import Graph from '../../common/views/Graph';
@@ -22,6 +24,17 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       this.state = {
         ready: false,
       };
+    }
+
+    createStatTitle = (text, help) => {
+      return (
+        <div>
+          {text}
+          <Tooltip className="stat-title-tooltip" title={help}>
+            <QuestionCircleOutlined />
+          </Tooltip>
+        </div>
+      );
     }
 
     createChaosResultUI = (key, chaosResult) => {
@@ -52,7 +65,6 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
     )
     }
 
-
     createJobResultUI = (key, jobResult) => {
       const latencies = jobResult.latencies;
       const convert = l => {
@@ -81,20 +93,46 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
         >
 
           <Descriptions className="value-title-style" column={4}>
-            <Descriptions.Item><Statistic title="Percent Success" value={(jobResult.success*100).toFixed(2)} suffix="%"/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Duration" value={(jobResult.duration / 1000000000.0).toFixed(2)} suffix="s"/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Time Range" value={moment(jobResult.earliest).format("h:mm:ss a") + " - " + moment(jobResult.latest).format("h:mm:ss a")}/></Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Percent Success", "The percentage of requests whose responses didn't error and had status codes in (200, 400)")}
+                value={(jobResult.success*100).toFixed(2)} suffix="%"
+              />
+            </Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Duration", "The total duration of the load test")}
+                value={(jobResult.duration / 1000000000.0).toFixed(2)} suffix="s"/>
+            </Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Time Range", "Start time to end time")}
+                value={moment(jobResult.earliest).format("h:mm:ss a") + " - " + moment(jobResult.latest).format("h:mm:ss a")}/>
+            </Descriptions.Item>
           </Descriptions>
           
           <Descriptions className="value-title-style" column={4}>
-            <Descriptions.Item><Statistic title="Requests" value={jobResult.requests} suffix=""/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Rate" value={parseFloat(jobResult.rate).toFixed(2)} suffix="reqs / s"/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Throughput" value={parseFloat(jobResult.throughput).toFixed(2)} suffix="reqs / s"/></Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Requests", "The total number of requests executed")}
+                value={jobResult.requests} suffix=""/>
+            </Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Rate", "Total requests / duration")}
+                value={parseFloat(jobResult.rate).toFixed(2)} suffix="reqs / s"/></Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Throughput", "Total successful requests / duration")}
+                value={parseFloat(jobResult.throughput).toFixed(2)} suffix="reqs / s"/></Descriptions.Item>
           </Descriptions>
           
           <Descriptions className="value-title-style" column={1}>
             <Descriptions.Item>
-              <Statistic title="Status codes" value={" "} formatter={
+              <Statistic
+                title={this.createStatTitle("Status codes", "A list of status codes that appeared in responses and their frequency")}
+                value={" "}
+                formatter={
                 (value) => Object.keys(jobResult.status_codes).map(
                   (code) => (
                     <Tooltip key={code} title={errCodeStringMap[code]}>
@@ -109,21 +147,50 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
           </Descriptions>
 
           <Descriptions className="value-title-style" column={4}>
-            <Descriptions.Item><Statistic title="Latency total" value={convert(latencies.total)} suffix={convertUnit(latencies.total)}/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Latency min" value={convert(latencies.min)} suffix={convertUnit(latencies.min)}/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Latency max" value={convert(latencies.max)} suffix={convertUnit(latencies.max)}/></Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Latency total", "The sum of latencies across all requests")}
+                value={convert(latencies.total)} suffix={convertUnit(latencies.total)}/>
+            </Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Latency min", "The minimum latency of all requests")}
+                value={convert(latencies.min)} suffix={convertUnit(latencies.min)}/>
+            </Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Latency max", "The maximum latency of all requests")}
+                value={convert(latencies.max)} suffix={convertUnit(latencies.max)}/></Descriptions.Item>
           </Descriptions>
           
           <Descriptions className="value-title-style" column={4}>
-            <Descriptions.Item><Statistic title="Latency 50th" value={convert(latencies['50th'])} suffix={convertUnit(latencies['50th'])}/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Latency 90th" value={convert(latencies['90th'])} suffix={convertUnit(latencies['90th'])}/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Latency 95th" value={convert(latencies['95th'])} suffix={convertUnit(latencies['95th'])}/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Latency 99th" value={convert(latencies['99th'])} suffix={convertUnit(latencies['99th'])}/></Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Latency 50th", "The 50th percentile of the latencies of all requests")}
+                value={convert(latencies['50th'])} suffix={convertUnit(latencies['50th'])}/></Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Latency 90th", "The 90th percentile of the latencies of all requests")}
+                value={convert(latencies['90th'])} suffix={convertUnit(latencies['90th'])}/></Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Latency 95th", "The 95th percentile of the latencies of all requests")}
+                value={convert(latencies['95th'])} suffix={convertUnit(latencies['95th'])}/></Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Latency 99th", "The 99th percentile of the latencies of all requests")}
+                value={convert(latencies['99th'])} suffix={convertUnit(latencies['99th'])}/></Descriptions.Item>
           </Descriptions>
 
           <Descriptions className="value-title-style" column={4}>
-            <Descriptions.Item><Statistic title="Bytes In" value={jobResult.bytes_in.total / 1000} suffix="kB"/></Descriptions.Item>
-            <Descriptions.Item><Statistic title="Bytes Out" value={jobResult.bytes_out.total / 1000} suffix="kB"/></Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Bytes In", "The total number of bytes received in with the response bodies.")}
+                value={jobResult.bytes_in.total / 1000} suffix="kB"/></Descriptions.Item>
+            <Descriptions.Item>
+              <Statistic
+                title={this.createStatTitle("Bytes Out", "The total number of bytes sent out with the request bodies.")}
+                value={jobResult.bytes_out.total / 1000} suffix="kB"/></Descriptions.Item>
           </Descriptions>
 
         </Card>
@@ -180,27 +247,35 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       if (!ready) {
         return null;
       }
-
       const instance = testInstances.get(id);
+
+      const breadcrumb = (
+        <Breadcrumb>
+          <Breadcrumb.Item>
+            <Link to="/">Home</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link to={`/test-template-details/${instance.TestID}`}>
+              {instance.TestID}
+            </Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            {id.split("-").slice(1).pop()}
+          </Breadcrumb.Item>
+        </Breadcrumb>
+      );
 
       const headerProps = {
         className: "site-page-header",
-        title: "Test Instance Details",
-        subTitle: `view the details of test instance ${id}`,
+        title: breadcrumb,
+        subTitle: `view test instance details!`,
       };
-
-      const header = location.state
-      ? (
-        <PageHeader
-          {...headerProps}
-          onBack={() => window.history.back()}
-        />
-      ) : <PageHeader {...headerProps} backIcon={false} />
 
       // TODO: Add tooltip with information about metric fields
       return (
         <Page
-          CustomPageHeader={header}
+          currentPage="/"
+          CustomPageHeader={<PageHeader {...headerProps} />}
           CustomPageContent={
             <Space direction="vertical" size='large' style={{ 'width': '100%' }}>
               <div>

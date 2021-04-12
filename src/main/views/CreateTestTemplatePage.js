@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import { Form, Input, PageHeader, Button } from 'antd';
+import { Form, Input, PageHeader, Button, Breadcrumb, message } from 'antd';
+import { Link } from 'react-router-dom';
 
 import Page from '../../common/views/Page';
 import Test from '../../model/test';
 
 import DynamicJobField from './DynamicJobField';
+import DynamicChaosField from './DynamicChaosField';
+
+import '../styles/index.css';
 
 const layout = {
   labelCol: {
@@ -37,8 +41,9 @@ class CreateTestTemplatePage extends Component {
 
   onFinish = async(values) => {
     console.log('Success:', values);
+
     this.setState({loading: true});
-    const { name, jobs } = values;
+    const { name, jobs, chaos } = values;
 
     const response = await Test.create({
       Name: name,
@@ -52,11 +57,25 @@ class CreateTestTemplatePage extends Component {
           HTTPMethod: job.httpmethod,
           HTTPUrl: job.httpurl,
         }
+      }),
+      Chaos: (chaos || []).map(c => {
+        let selectors = {};
+        c.selectors.forEach(obj => {
+          let selector = obj.selector.split(":");
+          selectors[selector[0]] = selector[1];
+        });
+        return {
+          Count: parseInt(c.count),
+          Namespace: c.namespace,
+          Selectors: selectors,
+          Timeout: parseInt(c.timeout),
+        }
       })
     });
     console.log(response);
+    message.success("Successfully created test template!");
     this.setState({loading: false});
-    // TODO: show success banner
+
     if (this.props.location.state) {
       window.history.back();
     }
@@ -69,26 +88,45 @@ class CreateTestTemplatePage extends Component {
   render() {
     const { location } = this.props;
     const { loading } = this.state;
-    const header = location.state
-      ? (
-        <PageHeader
-          {...headerProps}
-          onBack={() => window.history.back()}
-        />
-      ) : <PageHeader {...headerProps} backIcon={false} />
+    const data = location.state ? location.state.data : null;
 
+    const breadcrumb = (
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <Link to="/">Home</Link>
+        </Breadcrumb.Item>
+        {data &&
+          <Breadcrumb.Item>
+            <Link to={`/test-template-details/${data.name}`}>
+              {data.name}
+            </Link>
+          </Breadcrumb.Item>
+        }
+        <Breadcrumb.Item>
+          {data ? "Edit" : "Create"} Test Template
+        </Breadcrumb.Item>
+      </Breadcrumb>
+    );
+
+    const headerProps = {
+      className: "site-page-header",
+      title: breadcrumb,
+    };
+    
     return (
       <Page
-        CustomPageHeader={header}
+        currentPage="/"
+        CustomPageHeader={<PageHeader {...headerProps} />}
         CustomPageContent={
           <Form
             {...layout}
             name="basic"
             onFinish={this.onFinish}
             onFinishFailed={this.onFinishFailed}
-            initialValues={{jobs: [""]}}
+            initialValues={data || {jobs: [""]}}
           >
             <Form.Item
+              className="form-fields"
               label="Name"
               name="name"
               rules={[
@@ -98,19 +136,19 @@ class CreateTestTemplatePage extends Component {
                 },
               ]}
             >
-              <Input placeholder='Name of test' />
+              <Input disabled={data} placeholder='Name of test' />
             </Form.Item>
-
+            
             <DynamicJobField />
+            <DynamicChaosField data={data} />
 
             <Form.Item {...tailLayout}>
               <Button type="primary" htmlType="submit" loading={loading}>
-                Submit
+                {data ? "Save Data" : "Submit" }
               </Button>
             </Form.Item>
           </Form>
         }
-        currentPage="/tests"
       />
     );
   }

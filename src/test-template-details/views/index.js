@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
   PageHeader,
   Button,
+  Breadcrumb,
   Typography,
   Table,
   Space,
@@ -15,6 +17,7 @@ import {
   Popover,
   Descriptions,
   Collapse,
+  message,
 } from 'antd';
 
 import Page from '../../common/views/Page';
@@ -133,7 +136,14 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
           submitTestModalVisible: false,
           instanceIds: docs.sort(({ CreatedAt: c1 }, { CreatedAt: c2 }) => c2 - c1).map(d => d.ID),
         });
+        message.success("Test instance successfully started");
       });
+    }).catch(err => {
+      this.setState({
+        submitTestModalLoading: false,
+        submitTestModalVisible: false,
+      });
+      message.error("Failed to start test instance (" + err + ")");
     });
   }
 
@@ -184,18 +194,66 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
     }
   }
 
+  goToCreateTestTemplatePage = (test) => {
+    const { history } = this.props;
+    const { Name, Jobs, Chaos } = test;
+    console.log(test);
+    let data = {
+      name: Name,
+      jobs: Jobs.map(job => {
+        return {
+          duration: job.Duration,
+          frequency: job.Frequency,
+          group: job.Group,
+          httpmethod: job.HTTPMethod,
+          httpurl: job.HTTPUrl,
+          name: job.Name,
+        };
+      }),
+      chaos: (Chaos || []).map(chaos => {
+        let selectors = [];
+        if (chaos.Selectors) {
+          Object.keys(chaos.Selectors).forEach(key => {
+            selectors.push({
+              selector: key + ":" + chaos.Selectors[key]
+            });
+          });
+        }
+        return {
+          count: chaos.Count,
+          namespace: chaos.Namespace,
+          selectors: selectors,
+          timeout: chaos.Timeout,
+        };
+      }),
+    };
+    console.log(data);
+    history.push('/create-test-template', {data: data});
+  }
+
   testScheduleModalFormRef = React.createRef();
 
   render() {
-    const { location, match, test, testInstances, testSchedules } = this.props;
+    const { match, test, testInstances, testSchedules } = this.props;
     const {
       submitTestModalVisible, submitTestModalLoading, instanceIds, scheduleIds, showTestScheduleModal,
     } = this.state;
     const { id } = match.params;
 
+    const breadcrumb = (
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <Link to="/">Home</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          {id}
+        </Breadcrumb.Item>
+      </Breadcrumb>
+    );
+
     const headerProps = {
       className: "site-page-header",
-      title: "Test Template Details",
+      title: breadcrumb,
       subTitle: "manage everything related to a test template!",
       extra: (
         <div>
@@ -206,21 +264,12 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
           }}>
             Start Test Instance
           </Button>
-          <Button key="2" style={{"marginLeft": 14}}>
+          <Button key="2" style={{"marginLeft": 14}} onClick={() => this.goToCreateTestTemplatePage(test)}>
             Edit Test Template
           </Button>          
         </div>
-
       ),
     };
-
-    const header = location.state
-      ? (
-        <PageHeader
-          {...headerProps}
-          onBack={() => window.history.back()}
-        />
-      ) : <PageHeader {...headerProps} backIcon={false} />
 
     const testInstanceData = instanceIds
       .map(id => testInstances.get(id))
@@ -254,7 +303,11 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
     return (
       <div>
         <Page
-          CustomPageHeader={header}
+          CustomPageHeader={
+            <PageHeader
+              {...headerProps} 
+            />
+          }
           CustomPageContent={test === undefined ? <></> : (
             <Space direction="vertical" size='large' style={{ 'width': '100%' }}>
               <Graph minimized={true} testId={id} />
@@ -300,7 +353,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
               </div>
             </Space>
           )}
-          currentPage="/tests"
+          currentPage="/"
         />
         <Modal
           title="Please confirm"
