@@ -32,7 +32,10 @@ const DynamicChaosField = props => {
               >
                 <Input placeholder="Namespace" />
               </Form.Item>
-              <DynamicSelectorField name={[index, "selectors"]} data={data && data[index].selectors ? data[index].selectors : null} />
+              <DynamicSelectorField
+                name={[index, "selectors"]}
+                data={data && index < data.length && data[index].selectors ? data[index].selectors : null}
+              />
               <Form.Item
                 label="Timeout (s)"
                 name={[index, "timeout"]}

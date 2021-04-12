@@ -36,7 +36,9 @@ const DynamicSelectorField = props => {
             fieldKey={[fieldKey, index]}
           >
             <Space align='baseline'>
-              <Input defaultValue={initialSels ? `${initialSels[index].selector}` : null} placeholder="Key:Value" />
+              <Input
+                defaultValue={initialSels && index < initialSels.length ? `${initialSels[index].selector}` : null}
+                placeholder="Key:Value" />
               {index === fields.length - 1 && <MinusCircleOutlined onClick={() => remove(name)} />}
             </Space>
           </Form.Item>

@@ -61,8 +61,10 @@ class CreateTestTemplatePage extends Component {
       Chaos: (chaos || []).map(c => {
         let selectors = {};
         c.selectors.forEach(obj => {
-          let selector = obj.selector.split(":");
-          selectors[selector[0]] = selector[1];
+          if (obj && obj.selector) {
+            let selector = obj.selector.split(":");
+            selectors[selector[0]] = selector[1];
+          }
         });
         return {
           Count: parseInt(c.count),
