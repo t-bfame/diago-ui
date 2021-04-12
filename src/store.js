@@ -7,9 +7,11 @@ import {
 import thunk from 'redux-thunk';
 
 import modelReducer from './model/reducer';
+import { dashReducer } from './reducer';
 
 const rootReducer = combineReducers({
     model: modelReducer,
+    dash: dashReducer,
 });
 
 const persistedState = {};

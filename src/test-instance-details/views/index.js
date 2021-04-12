@@ -10,6 +10,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import Page from '../../common/views/Page';
 import Graph from '../../common/views/Graph';
 import Status from '../../common/views/Status';
+import Test from '../../model/test';
 import TestInstance from '../../model/test-instance';
 
 import '../styles/index.css';
@@ -17,7 +18,9 @@ import '../styles/index.css';
 const { Text } = Typography;
 
 const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => ({
+  tests: state.model.tests,
   testInstances: state.model['test-instances'],
+  dashMeta: state.dash.meta,
 }))(class TestInstanceDetailsPage extends Component {
     constructor(props) {
       super(props);
@@ -198,6 +201,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
     }
 
     createGraphResultUI = (instance) => {
+      const { dashMeta } = this.props;
 
       let start = moment(instance.CreatedAt * 1000);
       let end = moment();
@@ -223,24 +227,31 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       let to = end.unix() * 1000;
 
       return (
-        <Graph from={from} to={to} instanceId={instance.ID} testID={instance.TestID} />
+        <Graph meta={dashMeta} from={from} to={to} instanceId={instance.ID} testID={instance.TestID} />
       )
     }
 
     componentDidMount() {
-      const { testInstances, history, match: { params: { id } } } = this.props;
-      if (testInstances?.get(id)) {
-        this.setState({ready: true});
+      const { tests, testInstances, match: { params: { id } } } = this.props;
+      const instance = testInstances?.get(id);
+      if (instance) {
+        const test = tests?.get(instance.TestID);
+        if (test) {
+          this.setState({ready: true});
+        } else {
+          Test.get(instance.TestID).then(() => { this.setState({ready: true}); });
+        }
       } else {
         // TODO: get TestID from referrer or something...
-        TestInstance.all()
-        .then(() => { this.setState({ready: true}); })
-        .catch(() => { history.replace('/404'); })
+        TestInstance.all().then(async ({ docs }) => {
+          await Test.get(docs.find(d => d.ID === id).TestID);
+          this.setState({ready: true});
+        });
       }
     }
   
     render() {
-      const { match, location, testInstances } = this.props;
+      const { match, location, tests, testInstances } = this.props;
       const { id } = match.params;
       const { ready } = this.state;
 
@@ -248,6 +259,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
         return null;
       }
       const instance = testInstances.get(id);
+      const test = tests.get(instance.TestID);
 
       const breadcrumb = (
         <Breadcrumb>
@@ -269,7 +281,18 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
         className: "site-page-header",
         title: breadcrumb,
         subTitle: `view test instance details!`,
-        extra: <Button key="1" onClick={() => {console.log("call stop")}} type="primary" danger disabled={instance.Status !== "submitted"}>Stop Test Instance</Button>, 
+        extra: (
+          <Button
+            key="1"
+            onClick={() => { 
+              test.stop().then(() => { TestInstance.forTestId(instance.TestID); });
+            }}
+            type="primary"
+            danger
+            disabled={instance.Status !== "submitted"}>
+              Stop Test Instance
+            </Button>
+        ) 
       };
 
       // TODO: Add tooltip with information about metric fields

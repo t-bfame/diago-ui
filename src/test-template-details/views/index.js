@@ -92,6 +92,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
   test: state.model.tests?.get(id),
   testInstances: state.model['test-instances'],
   testSchedules: state.model['test-schedules'],
+  dashMeta: state.dash.meta,
 }))(class TestTemplateDetailsPage extends Component {
 
   constructor(props) {
@@ -234,7 +235,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
   testScheduleModalFormRef = React.createRef();
 
   render() {
-    const { match, test, testInstances, testSchedules } = this.props;
+    const { dashMeta, match, test, testInstances, testSchedules } = this.props;
     const {
       submitTestModalVisible, submitTestModalLoading, instanceIds, scheduleIds, showTestScheduleModal,
     } = this.state;
@@ -310,7 +311,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
           }
           CustomPageContent={test === undefined ? <></> : (
             <Space direction="vertical" size='large' style={{ 'width': '100%' }}>
-              <Graph minimized={true} testId={id} />
+              <Graph meta={dashMeta} minimized={true} testId={id} />
               <div>
                 <Title level={5}>
                   Executions

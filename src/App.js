@@ -4,8 +4,22 @@ import LandingPage from './LandingPage';
 import CreateTestTemplatePage from './main/views/CreateTestTemplatePage';
 import TestTemplateDetailsPage from './test-template-details/views';
 import TestInstanceDetailsPage from './test-instance-details/views';
+import getClient from './model/client';
+import store from './store';
+import { RECEIVE_DASH_META } from './reducer';
 
 class App extends Component {
+  componentDidMount() {
+    getClient().get('/dashboard-metadata').then(({ data: meta }) => {
+      store.dispatch({
+        type: RECEIVE_DASH_META,
+        data: {
+          meta,
+        },
+      });
+    });
+  }
+
   render() {
     return (
       <BrowserRouter>

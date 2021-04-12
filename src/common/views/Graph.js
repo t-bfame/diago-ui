@@ -31,7 +31,10 @@ class Graph extends Component {
 
     render() {
         // TODO: Get this from redux
-        let { from, to, jobId, instanceId, testId, minimized } = this.props;
+        let { meta, from, to, jobId, instanceId, testId, minimized } = this.props;
+        if (!meta) {
+            return null;
+        }
         var src = "http://192.168.64.2:32387/d-solo/diago-test-info-dashboard?";
         var dashLink = "http://192.168.64.2:32387";
 
