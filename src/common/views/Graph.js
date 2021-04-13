@@ -36,8 +36,6 @@ class Graph extends Component {
             return null;
         }
 
-        console.log(meta);
-
         let src = meta.url + "?";
         let dashLink = src.replace("d-solo", "d");
 

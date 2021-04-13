@@ -40,7 +40,6 @@ class CreateTestTemplatePage extends Component {
   }
 
   onFinish = async(values) => {
-    console.log('Success:', values);
 
     this.setState({loading: true});
     const { name, jobs, chaos } = values;
@@ -74,7 +73,6 @@ class CreateTestTemplatePage extends Component {
         }
       })
     });
-    console.log(response);
     message.success("Successfully created test template!");
     this.setState({loading: false});
 

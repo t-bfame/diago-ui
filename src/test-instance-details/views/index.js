@@ -295,7 +295,6 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
           </Button>
         ) 
       };
-      console.log(instance);
       return (
         <Page
           currentPage="/"
