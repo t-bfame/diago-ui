@@ -68,22 +68,22 @@ class Page extends Component {
               Home
             </Menu.Item>
             <Menu.Item key="/github" icon={<GithubOutlined />}>
-              <a href="https://github.com/t-bfame">
+              <a href="https://github.com/t-bfame" target="_blank">
                 Github
               </a>
             </Menu.Item>
             <Menu.Item key="/wiki" icon={<FileSearchOutlined />}>
-              <a href="https://github.com/t-bfame/diago/wiki">
+              <a href="https://github.com/t-bfame/diago/wiki" target="_blank">
                 Wiki
               </a>
             </Menu.Item>
             <Menu.Item key="/issues" icon={<ExclamationCircleOutlined />}>
-              <a href="https://github.com/t-bfame/diago/issues">
+              <a href="https://github.com/t-bfame/diago/issues" target="_blank">
                 Issues
               </a>
             </Menu.Item>
             <Menu.Item key="/releases" icon={<TagOutlined />}>
-              <a href="https://github.com/t-bfame/diago/releases">
+              <a href="https://github.com/t-bfame/diago/releases" target="_blank">
                 Releases
               </a>
             </Menu.Item>

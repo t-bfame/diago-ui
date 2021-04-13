@@ -161,7 +161,7 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
         this.createTestSchedule(values);
       })
       .catch(info => {
-        console.log('Validate failed:', info);
+        // console.log('Validate failed:', info);
       });
   }
 
@@ -196,7 +196,6 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
   goToCreateTestTemplatePage = (test) => {
     const { history } = this.props;
     const { Name, Jobs, Chaos } = test;
-    console.log(test);
     let data = {
       name: Name,
       jobs: Jobs.map(job => {
@@ -226,7 +225,6 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
         };
       }),
     };
-    console.log(data);
     history.push('/create-test-template', {data: data});
   }
 

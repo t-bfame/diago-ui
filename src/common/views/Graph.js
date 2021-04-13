@@ -35,18 +35,24 @@ class Graph extends Component {
         if (!meta) {
             return null;
         }
-        var src = "http://192.168.64.2:32387/d-solo/diago-test-info-dashboard?";
-        var dashLink = "http://192.168.64.2:32387";
+
+        console.log(meta);
+
+        let src = meta.url + "?";
+        let dashLink = src.replace("d-solo", "d");
 
         from= from ? from : moment().subtract(this.state.timeDelta, 'hours').unix() * 1000;
         to= to ? to : moment().unix() * 1000;
 
-        src = this.addQuery(src, "theme", "light");
-        src = this.addQuery(src, "from", from);
-        src = this.addQuery(src, "to", to);
-        src = this.addQuery(src, "var-jobid", jobId);
-        src = this.addQuery(src, "var-instid", instanceId);
-        src = this.addQuery(src, "var-testid", testId);
+        let query = "";
+        query = this.addQuery(query, "from", from);
+        query = this.addQuery(query, "to", to);
+        query = this.addQuery(query, "var-jobid", jobId);
+        query = this.addQuery(query, "var-instid", instanceId);
+        query = this.addQuery(query, "var-testid", testId);
+
+        src = src + this.addQuery(query, "theme", "light");
+        dashLink = dashLink + query;
 
         return (
             <div style={{"width": "100%"}}>
@@ -62,6 +68,7 @@ class Graph extends Component {
                 <Card style={{"textAlign": "center", "width": "100%"}}>
                         <iframe
                             src={this.addQuery(src, "panelId", "3")}
+                            key={this.addQuery(src, "panelId", "3")}
                             width="100%"
                             height={minimized ? "300" : "200"} 
                             title={this.addQuery(src, "panelId", "3")}
@@ -78,6 +85,7 @@ class Graph extends Component {
                         )}
                         {!minimized ? <iframe
                             src={this.addQuery(src, "panelId", "2")}
+                            key={this.addQuery(src, "panelId", "2")}
                             width="100%"
                             height="200"
                             title={this.addQuery(src, "panelId", "2")}
@@ -85,6 +93,7 @@ class Graph extends Component {
                         </iframe>: null}
                         {!minimized ? <iframe
                             src={this.addQuery(src, "panelId", "1")}
+                            key={this.addQuery(src, "panelId", "1")}
                             width="100%"
                             height="200"
                             title={this.addQuery(src, "panelId", "1")}

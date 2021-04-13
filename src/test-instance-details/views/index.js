@@ -330,7 +330,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                     </Descriptions.Item>
                     {instance.Error &&
                       <Descriptions.Item>
-                        <Statistic title="Failure Reason" value={instance.Error} />
+                        <Statistic title="Error Message" value={instance.Error} />
                       </Descriptions.Item>
                     }
                   </Descriptions>
