@@ -55,6 +55,7 @@ class CreateTestTemplatePage extends Component {
           Duration: parseInt(job.duration),
           HTTPMethod: job.httpmethod,
           HTTPUrl: job.httpurl,
+          HTTPBody: job.body,
         }
       }),
       Chaos: (chaos || []).map(c => {
