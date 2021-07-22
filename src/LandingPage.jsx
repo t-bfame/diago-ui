@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from "react-router-dom";
+
+import { useSession } from "./auth/services/session"
+import { isAuthenticated, login } from "./auth/services/auth"
 
 import Test from './model/test';
 import TestInstance from './model/test-instance';
@@ -43,9 +47,20 @@ const testInstanceCols = [
 ];
 
 const LandingPage = ({ history, location }) => {
+  // const history = useHistory();
+  // const location = useLocation();
+
   const [activeIds, setActiveIds] = useState([]);
   const [finishedIds, setFinishedIds] = useState([]);
   const [options, setOptions] = useState([]);
+
+  const session = useSession()
+  const user = session?.identity?.traits
+
+  useEffect(() => {
+    if (!isAuthenticated()) login()
+  }, [])
+
 
   useEffect(() => {
     TestInstance.all().then(r => {
@@ -106,6 +121,9 @@ const LandingPage = ({ history, location }) => {
     extra: <Button key="1" type="primary" onClick={goToCreateTestTemplatePage}>Create Test Template</Button>, 
   };
 
+  if (!user) console.log("No User")
+
+  if (!user) return null
 
   return (
     <Page
