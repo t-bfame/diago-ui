@@ -92,6 +92,18 @@ const DynamicJobField = props => {
               >
                 <Input placeholder='example: http://google.com' />
               </Form.Item>
+              <Form.Item
+                label="Persist Response Sampling Period (store 1/N responses, <=0 to bypass saving)"
+                name={[index, "persistResponseSamplingPeriod"]}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input the sampling period!',
+                  },
+                ]}
+              >
+                <Input placeholder="example: 0" />
+              </Form.Item>
               {index !== 0 && fields.length > 1 ? (
                 <Form.Item {...tailLayout}>
                   <Button
