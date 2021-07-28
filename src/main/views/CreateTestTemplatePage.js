@@ -56,7 +56,9 @@ class CreateTestTemplatePage extends Component {
           HTTPMethod: job.httpmethod,
           HTTPUrl: job.httpurl,
           HTTPBody: job.body,
-          PersistResponseSamplingPeriod: parseInt(job.persistResponseSamplingPeriod) || 0,
+          PersistResponseSampling: {
+            Period: parseInt(job.persistResponseSamplingPeriod) || 0,
+          },
         }
       }),
       Chaos: (chaos || []).map(c => {
