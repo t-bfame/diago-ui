@@ -205,7 +205,9 @@ const TestTemplateDetailsPage = connect((state, { match: { params: {id} } }) => 
           group: job.Group,
           httpmethod: job.HTTPMethod,
           httpurl: job.HTTPUrl,
+          body: job.HTTPBody,
           name: job.Name,
+          persistResponseSamplingPeriod: job.PersistResponseSampling.Period,
         };
       }),
       chaos: (Chaos || []).map(chaos => {

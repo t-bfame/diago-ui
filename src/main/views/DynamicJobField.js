@@ -92,6 +92,12 @@ const DynamicJobField = props => {
               >
                 <Input placeholder='example: http://google.com' />
               </Form.Item>
+              <Form.Item
+                label="Response Persist Data Sampling Period"
+                name={[index, "persistResponseSamplingPeriod"]}
+              >
+                <Input placeholder="example: 10" />
+              </Form.Item>
               {index !== 0 && fields.length > 1 ? (
                 <Form.Item {...tailLayout}>
                   <Button
