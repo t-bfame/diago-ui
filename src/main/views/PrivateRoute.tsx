@@ -1,4 +1,4 @@
-import { ReactNode, useContext } from "react";
+import { useContext, Component } from "react";
 import { UserContext } from "../../hooks/UserContext";
 import {
     Route,
@@ -6,22 +6,23 @@ import {
   } from "react-router-dom";
 
 interface IPrivateRouteProps {
-    children : ReactNode
+    component : Component
     path: string
 }
 
-export default function PrivateRoute({ children, ...rest } : IPrivateRouteProps) {
+export default function PrivateRoute({ component, ...rest } : IPrivateRouteProps) {
     let auth = useContext(UserContext);
+    console.log(auth);
     return (
       <Route
         {...rest}
         render={({ location }) =>
           (auth.user.username !== "") ? (
-            children
+            component
           ) : (
             <Redirect
               to={{
-                pathname: "/",
+                pathname: "/auth/login",
                 state: { from: location }
               }}
             />
