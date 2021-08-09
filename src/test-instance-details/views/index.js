@@ -240,6 +240,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
           <List
             size="large"
             bordered
+            header={<Text>{`Logs`}</Text>}
             dataSource={logs}
             renderItem={item => <List.Item>{item}</List.Item>}
             pagination={{"defaultPageSize": 5, "pageSize": 5, "size": "small"}}
