@@ -9,6 +9,7 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import { UserContext } from '../../hooks/UserContext';
+import getClient from '../model/client';
 import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -129,123 +130,85 @@ const Login = () => {
       }, [state.username, state.password]);
 
     const handleLogin = async () => {
-        await fetch('http://localhost:8080/query', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            query: `
-              mutation login($input: Login!) {
-                login(input: $input) {
-                  token
-                  status
-                  error
-                }
-              }
-            `,
-            variables: {
-              input: {
-                username: state.username,
-                password: state.password,
-              }
-            }
-          })
-        })
-        .then((res) => res.json())
-        .then((result) => {
-          if (result["data"]["login"]["status"] === "success") {
-            setToken(result["data"]["login"]["token"]);
-            dispatch({
-              type: 'loginSuccess',
-              payload: 'Login Successful'
-            });
-            history.push("/dashboard");
-          } else {
-            dispatch({
-              type: 'loginFailed',
-              payload: 'Incorrect username or password'
-            });
-          }
-        });
-      };
-
-      const handleSignUp = async () => {
-        await fetch('http://localhost:8080/query', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            query: `
-              mutation createUser($input: NewUser!) {
-                createUser(input: $input) {
-                  token
-                  status
-                  error
-                }
-              }
-            `,
-            variables: {
-              input: {
-                username: state.username,
-                password: state.password,
-              }
-            }
-          })
-        })
-        .then((res) => res.json())
-        .then((result) => {
-          if (result["data"]["createUser"]["status"] === "success") {
-            dispatch({
-              type: 'loginSuccess',
-              payload: 'Account created!'
-            });
-          } else {
-            dispatch({
-              type: 'loginFailed',
-              payload: 'Username already exists!'
-            });
-            console.log(result);
-          }
-        });
-      }
-      
-      const handleKeyPress = (event: React.KeyboardEvent) => {
-        if (event.keyCode === 13 || event.which === 13) {
-          state.isButtonDisabled || handleFunc();
-        }
-      };
-      
-      const handleUsernameChange: React.ChangeEventHandler<HTMLInputElement> =
-        (event) => {
+      return getClient.post('auth/login', {
+          username: state.username,
+          password: state.password,
+      })
+      .then((res) => res.json())
+      .then(async (result) => {
+        if (result["data"]["login"]["status"] === "success") {
+          setToken(result["data"]["login"]["token"]);
           dispatch({
-            type: 'setUsername',
-            payload: event.target.value
+            type: 'loginSuccess',
+            payload: 'Login Successful'
           });
-        };
-      
-      const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> =
-        (event) => {
+          history.push("/dashboard");
+        } else {
           dispatch({
-            type: 'setPassword',
-            payload: event.target.value
+            type: 'loginFailed',
+            payload: 'Incorrect username or password'
           });
         }
+      })
+    };
 
-      const handleFormTypeChange = () => {
-        if (state.registerLogin === RegisterOrLogin.LOGIN) {
+    const handleSignUp = async () => {
+      return getClient.post(`auth/register`, {
+        username: state.username,
+        password: state.password,
+      })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result["data"]["createUser"]["status"] === "success") {
           dispatch({
-            type: "swapFieldType",
-            payload: RegisterOrLogin.REGISTER
+            type: 'loginSuccess',
+            payload: 'Account created!'
           });
         } else {
           dispatch({
-            type: "swapFieldType",
-            payload: RegisterOrLogin.LOGIN
+            type: 'loginFailed',
+            payload: 'Username already exists!'
           });
+          console.log(result);
         }
+      }); 
+    }
+    
+    const handleKeyPress = (event: React.KeyboardEvent) => {
+      if (event.keyCode === 13 || event.which === 13) {
+        state.isButtonDisabled || handleFunc();
       }
+    };
+    
+    const handleUsernameChange: React.ChangeEventHandler<HTMLInputElement> =
+      (event) => {
+        dispatch({
+          type: 'setUsername',
+          payload: event.target.value
+        });
+      };
+    
+    const handlePasswordChange: React.ChangeEventHandler<HTMLInputElement> =
+      (event) => {
+        dispatch({
+          type: 'setPassword',
+          payload: event.target.value
+        });
+      }
+
+    const handleFormTypeChange = () => {
+      if (state.registerLogin === RegisterOrLogin.LOGIN) {
+        dispatch({
+          type: "swapFieldType",
+          payload: RegisterOrLogin.REGISTER
+        });
+      } else {
+        dispatch({
+          type: "swapFieldType",
+          payload: RegisterOrLogin.LOGIN
+        });
+      }
+    }
 
     let buttonText;
     let linkText;
