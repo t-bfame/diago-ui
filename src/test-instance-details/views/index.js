@@ -69,7 +69,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
     }
 
     createJobResultUI = (key, instance) => {
-      jobResult = instance.Metrics[key]
+      let jobResult = instance.Metrics[key]
       const latencies = jobResult.latencies;
       const convert = l => {
         let dur = moment.duration(l / 1000000.0);
