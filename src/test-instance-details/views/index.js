@@ -68,7 +68,8 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
     )
     }
 
-    createJobResultUI = (key, jobResult) => {
+    createJobResultUI = (key, instance) => {
+      jobResult = instance.Metrics[key]
       const latencies = jobResult.latencies;
       const convert = l => {
         let dur = moment.duration(l / 1000000.0);
@@ -195,7 +196,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                 title={this.createStatTitle("Bytes Out", "The total number of bytes sent out with the request bodies.")}
                 value={jobResult.bytes_out.total / 1000} suffix="kB"/></Descriptions.Item>
           </Descriptions>
-
+          {instance.Logs ? this.createLogsUI(instance.Logs[key]) : null}
         </Card>
       );
     }
@@ -231,10 +232,10 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       )
     }
 
-    createLogsUI = (instance) => {
-      console.log(instance)
+    createLogsUI = (logs) => {
+      console.log(logs)
 
-      if (instance.Logs) {
+      if (logs) {
         return (
           <Card
             title={<Text>{`Logs`}</Text>}
@@ -244,7 +245,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
             <List
               size="large"
               bordered
-              dataSource={instance.Logs}
+              dataSource={logs}
               renderItem={item => <List.Item>{item}</List.Item>}
               pagination={{"defaultPageSize": 5, "pageSize": 5, "size": "small"}}
             />
@@ -361,8 +362,9 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
               <div>
                 <Space direction="vertical" size='small' style={{ 'width': '100%' }}>
                   {
+                    //instance.Logs ? Object.keys(instance.Logs).map(key => this.createLogsUI(key, instance.Logs[key])) : null
                     instance.Metrics
-                    ? Object.keys(instance.Metrics).map(key => this.createJobResultUI(key, instance.Metrics[key]))
+                    ? Object.keys(instance.Metrics).map(key => this.createJobResultUI(key, instance))
                     : null
                   }
                 </Space>
@@ -376,7 +378,6 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                   }
                 </Space>
               </div>
-              {this.createLogsUI(instance)}
             </Space>
           }
         />
