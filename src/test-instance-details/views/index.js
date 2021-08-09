@@ -236,20 +236,14 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       console.log(logs)
 
       if (logs) {
-        return (
-          <Card
-            title={<Text>{`Logs`}</Text>}
-            style={{ width: '100%' }}
-          >
-            
-            <List
-              size="large"
-              bordered
-              dataSource={logs}
-              renderItem={item => <List.Item>{item}</List.Item>}
-              pagination={{"defaultPageSize": 5, "pageSize": 5, "size": "small"}}
-            />
-          </Card>
+        return ( 
+          <List
+            size="large"
+            bordered
+            dataSource={logs}
+            renderItem={item => <List.Item>{item}</List.Item>}
+            pagination={{"defaultPageSize": 5, "pageSize": 5, "size": "small"}}
+          />
         );
       }
     }
