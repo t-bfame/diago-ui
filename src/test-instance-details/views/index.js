@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { PageHeader, Breadcrumb, Space, Typography, Descriptions, Badge, Card, Statistic, Tooltip, Button} from 'antd';
+import { PageHeader, Breadcrumb, Space, Typography, Descriptions, List, Badge, Card, Statistic, Tooltip, Button} from 'antd';
 import moment from 'moment';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
@@ -231,6 +231,28 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
       )
     }
 
+    createLogsUI = (instance) => {
+      console.log(instance)
+
+      if (instance.Logs) {
+        return (
+          <Card
+            title={<Text>{`Logs`}</Text>}
+            style={{ width: '100%' }}
+          >
+            
+            <List
+              size="large"
+              bordered
+              dataSource={instance.Logs}
+              renderItem={item => <List.Item>{item}</List.Item>}
+              pagination={{"defaultPageSize": 5, "pageSize": 5, "size": "small"}}
+            />
+          </Card>
+        );
+      }
+    }
+
     componentDidMount() {
       const { tests, testInstances, match: { params: { id } } } = this.props;
       const instance = testInstances?.get(id);
@@ -354,6 +376,7 @@ const TestInstanceDetailsPage = connect((state, { match: { params: {id} } }) => 
                   }
                 </Space>
               </div>
+              {this.createLogsUI(instance)}
             </Space>
           }
         />
