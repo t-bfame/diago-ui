@@ -9,10 +9,10 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import { UserContext } from '../../hooks/UserContext';
-import getClient from '../model/client';
+import getClient from '../../model/client';
 import { useHistory } from 'react-router-dom';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       display: 'flex',
@@ -34,40 +34,19 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(25)
     }
   })
+
 );
-
-enum RegisterOrLogin {
-  REGISTER,
-  LOGIN
-}
-
-type State = {
-    username: string
-    password:  string
-    isButtonDisabled: boolean
-    helperText: string
-    isError: boolean
-    registerLogin: RegisterOrLogin
-  };
   
-  const initialState:State = {
+  const initialState = {
     username: '',
     password: '',
     isButtonDisabled: true,
     helperText: '',
     isError: false,
-    registerLogin: RegisterOrLogin.REGISTER
+    registerLogin: 0
   };
   
-  type Action = { type: 'setUsername', payload: string }
-    | { type: 'setPassword', payload: string }
-    | { type: 'setIsButtonDisabled', payload: boolean }
-    | { type: 'loginSuccess', payload: string }
-    | { type: 'loginFailed', payload: string }
-    | { type: 'setIsError', payload: boolean }
-    | { type: 'swapFieldType', payload: RegisterOrLogin};
-  
-  const reducer = (state: State, action: Action): State => {
+  const reducer = (state, action) => {
     switch (action.type) {
       case 'setUsername': 
         return {
@@ -130,14 +109,14 @@ const Login = () => {
       }, [state.username, state.password]);
 
     const handleLogin = async () => {
-      return getClient.post('auth/login', {
+      return getClient().post('login, {
           username: state.username,
           password: state.password,
       })
       .then((res) => res.json())
       .then(async (result) => {
-        if (result["data"]["login"]["status"] === "success") {
-          setToken(result["data"]["login"]["token"]);
+        if (result["data"]["success"] === "true") {
+          setToken(result["data"]["payload"]["token"]);
           dispatch({
             type: 'loginSuccess',
             payload: 'Login Successful'
@@ -153,13 +132,14 @@ const Login = () => {
     };
 
     const handleSignUp = async () => {
-      return getClient.post(`auth/register`, {
+      return getClient().post(`user`, {
         username: state.username,
         password: state.password,
       })
       .then((res) => res.json())
       .then((result) => {
-        if (result["data"]["createUser"]["status"] === "success") {
+        console.log(result)
+        if (result["data"]["success"] === "true") {
           dispatch({
             type: 'loginSuccess',
             payload: 'Account created!'
@@ -171,7 +151,7 @@ const Login = () => {
           });
           console.log(result);
         }
-      }); 
+      });
     }
     
     const handleKeyPress = (event: React.KeyboardEvent) => {
@@ -197,24 +177,24 @@ const Login = () => {
       }
 
     const handleFormTypeChange = () => {
-      if (state.registerLogin === RegisterOrLogin.LOGIN) {
+      if (state.registerLogin === 1) {
         dispatch({
           type: "swapFieldType",
-          payload: RegisterOrLogin.REGISTER
+          payload: 0
         });
       } else {
         dispatch({
           type: "swapFieldType",
-          payload: RegisterOrLogin.LOGIN
+          payload: 1
         });
       }
     }
 
     let buttonText;
     let linkText;
-    let handleFunc : () => Promise<void>;
+    let handleFunc;
     let titleText;
-    if (state.registerLogin === RegisterOrLogin.LOGIN) {
+    if (state.registerLogin === 1) {
       buttonText = "Login"
       linkText = "Don't have an account? Sign up here!"
       handleFunc = handleLogin
