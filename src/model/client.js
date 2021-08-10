@@ -3,7 +3,7 @@ import axios from 'axios';
 class Client {
   BASE_URL = '/api';
   get = (path) => {
-      token = sessionStorage.getItem("access_token")
+      const token = sessionStorage.getItem("access_token");
       if (token=== null) {
         return axios.get(`${this.BASE_URL}/${path}`);
       }
@@ -16,7 +16,7 @@ class Client {
       }
     }
   post = (path, data) => {
-      axios.post(`${this.BASE_URL}/${path}`, data);
+      const token = sessionStorage.getItem("access_token");
       if (token === null) {
         return axios.post(`${this.BASE_URL}/${path}`, data);
       }
@@ -29,6 +29,7 @@ class Client {
       }
     }
   delete = (path) => {
+      const token = sessionStorage.getItem("access_token");
       if (token === null) {
         return axios.delete(`${this.BASE_URL}/${path}`);
       }

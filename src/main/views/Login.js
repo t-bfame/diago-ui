@@ -109,7 +109,7 @@ const Login = () => {
       }, [state.username, state.password]);
 
     const handleLogin = async () => {
-      return getClient().post('login, {
+      return getClient().post('login', {
           username: state.username,
           password: state.password,
       })
