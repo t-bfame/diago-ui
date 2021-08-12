@@ -11,23 +11,23 @@ interface IPrivateRouteProps {
 }
 
 export default function PrivateRoute({ component, ...rest } : IPrivateRouteProps) {
-    let auth = useContext(UserContext);
-    console.log(auth);
-    return (
-      <Route
-        {...rest}
-        render={({ location }) =>
-          (auth.user.username !== "") ? (
-            component
-          ) : (
-            <Redirect
-              to={{
-                pathname: "/auth/login",
-                state: { from: location }
-              }}
-            />
-          )
-        }
-      />
-    );
-  }
+  let auth = useContext(UserContext);
+  console.log(auth);
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        (auth.user.username !== "") ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/auth/login",
+              state: { from: location }
+            }}
+          />
+        )
+      }
+    />
+  );
+}
