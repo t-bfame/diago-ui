@@ -14,20 +14,12 @@ export default function PrivateRoute({ component, ...rest }: IPrivateRouteProps)
   let auth = useContext(UserContext);
   console.log(auth);
   console.log(auth.user.username);
+  console.log(auth.user.username && auth.user.username !== "");
   return (
     <Route
       {...rest}
-      render={({ location }) =>
-        (auth.user.username && auth.user.username !== "") ? (
-          component
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/auth/login",
-              state: { from: location }
-            }}
-          />
-        )
+      render={props =>
+        (auth.user.username && auth.user.username !== "") ? component : <Redirect to="/auth/login" />
       }
     />
   );
