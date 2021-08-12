@@ -1,5 +1,6 @@
 import React, { useReducer, useEffect, useContext } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { PageHeader, Breadcrumb } from 'antd';
 
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
@@ -11,6 +12,7 @@ import Link from '@material-ui/core/Link';
 import { UserContext } from '../../hooks/UserContext';
 import getClient from '../../model/client';
 import { useHistory } from 'react-router-dom';
+import Page from '../../common/views/Page';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -108,49 +110,49 @@ const Login = () => {
         }
       }, [state.username, state.password]);
 
-      const handleLogin = async () => {
-        return getClient().post('login', {
-            Username: state.username,
-            Password: state.password,
-        })
-        .then(async (result) => {
-          if (result.data.success === true) {
-            setToken(result.data.payload.token);
-            dispatch({
-              type: 'loginSuccess',
-              payload: 'Login Successful'
-            });
-            history.push("/");
-          } else {
-            dispatch({
-              type: 'loginFailed',
-              payload: 'Incorrect username or password'
-            });
-          }
-        })
-      };
-
-      const handleSignUp = async () => {
-        return getClient().post(`user`, {
+    const handleLogin = async () => {
+      return getClient().post('login', {
           Username: state.username,
           Password: state.password,
-        })
-        .then((result) => {
-          if (result.data.success === true) {
-            setToken(result.data.payload.token);
-            dispatch({
-              type: 'loginSuccess',
-              payload: 'Account created!'
-            });
-            history.push('/')
-          } else {
-            dispatch({
-              type: 'loginFailed',
-              payload: 'Username already exists!'
-            });
-          }
-        });
-      }
+      })
+      .then(async (result) => {
+        if (result.data.success === true) {
+          setToken(result.data.payload.token);
+          dispatch({
+            type: 'loginSuccess',
+            payload: 'Login Successful'
+          });
+          history.push("/");
+        } else {
+          dispatch({
+            type: 'loginFailed',
+            payload: 'Incorrect username or password'
+          });
+        }
+      })
+    };
+
+    const handleSignUp = async () => {
+      return getClient().post(`user`, {
+        Username: state.username,
+        Password: state.password,
+      })
+      .then((result) => {
+        if (result.data.success === true) {
+          setToken(result.data.payload.token);
+          dispatch({
+            type: 'loginSuccess',
+            payload: 'Account created!'
+          });
+          history.push('/')
+        } else {
+          dispatch({
+            type: 'loginFailed',
+            payload: 'Username already exists!'
+          });
+        }
+      });
+    }
     
     const handleKeyPress = (event: React.KeyboardEvent) => {
       if (event.keyCode === 13 || event.which === 13) {
@@ -204,52 +206,73 @@ const Login = () => {
       titleText = "Sign up!"
     }
 
+    const breadcrumb = (
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          Login
+        </Breadcrumb.Item>
+      </Breadcrumb>
+    );
+  
+    const headerProps = {
+      className: "site-page-header",
+      title: breadcrumb,
+      //subTitle: `view recent test instances!`,
+      //extra: <Button key="1" type="primary" onClick={goToCreateTestTemplatePage}>Create Test Template</Button>, 
+    };
+    
     return (
-      <form className={classes.container} noValidate autoComplete="off">
-        <Card className={classes.card}>
-          <CardHeader className={classes.header} title={titleText} />
-          <CardContent>
-            <div>
-              <TextField
-                error={state.isError}
-                fullWidth
-                id="username"
-                type="email"
-                label="Username"
-                placeholder="Username"
-                margin="normal"
-                onChange={handleUsernameChange}
-                onKeyPress={handleKeyPress}
-              />
-              <TextField
-                error={state.isError}
-                fullWidth
-                id="password"
-                type="password"
-                label="Password"
-                placeholder="Password"
-                margin="normal"
-                helperText={state.helperText}
-                onChange={handlePasswordChange}
-                onKeyPress={handleKeyPress}
-              />
-            </div>
-          </CardContent>
-          <Link href="#" onClick={handleFormTypeChange}>{linkText}</Link>
-          <CardActions>
-            <Button
-              variant="contained"
-              size="large"
-              color="secondary"
-              className={classes.loginBtn}
-              onClick={handleFunc}
-              disabled={state.isButtonDisabled}>
-              {buttonText}
-            </Button>
-          </CardActions>
-        </Card>
-      </form>
+      <Page
+        CustomPageHeader = {<PageHeader {...headerProps} />}
+        CustomPageContent = {
+          <form className={classes.container} noValidate autoComplete="off">
+            <Card className={classes.card}>
+              <CardHeader className={classes.header} title={titleText} style={{"fontSize": 20, "color": "#000000", "backgroundColor" : "#ffffff"} } />
+              <CardContent>
+                <div>
+                  <TextField
+                    error={state.isError}
+                    fullWidth
+                    id="username"
+                    type="email"
+                    label="Username"
+                    placeholder="Username"
+                    margin="normal"
+                    onChange={handleUsernameChange}
+                    onKeyPress={handleKeyPress}
+                  />
+                  <TextField
+                    error={state.isError}
+                    fullWidth
+                    id="password"
+                    type="password"
+                    label="Password"
+                    placeholder="Password"
+                    margin="normal"
+                    helperText={state.helperText}
+                    onChange={handlePasswordChange}
+                    onKeyPress={handleKeyPress}
+                  />
+                </div>
+                <Link href="#" onClick={handleFormTypeChange}>{linkText}</Link>
+              </CardContent>
+              <CardActions>
+                <Button
+                  variant="contained"
+                  size="large"
+                  color="secondary"
+                  className={classes.loginBtn}
+                  onClick={handleFunc}
+                  disabled={state.isButtonDisabled}>
+                  {buttonText}
+                </Button>
+              </CardActions>
+            </Card>
+          </form>
+        }
+      />
     );
   }
+  
   
   export default Login;
