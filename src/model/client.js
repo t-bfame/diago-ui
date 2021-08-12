@@ -10,7 +10,7 @@ class Client {
       else {
         return axios.get(`${this.BASE_URL}/${path}`, {
           headers: {
-            "Authorization" : `Bearer ${token}`
+            "Authorization" : `${token}`
           }
         })
       }
@@ -23,7 +23,7 @@ class Client {
       else {
         return axios.post(`${this.BASE_URL}/${path}`, data, {
           headers: {
-            "Authorization" : `Bearer ${token}`
+            "Authorization" : `${token}`
           }
         });
       }
@@ -36,7 +36,7 @@ class Client {
       else {
         return axios.delete(`${this.BASE_URL}/${path}`, {
           headers: {
-            "Authorization" : `Bearer ${token}`
+            "Authorization" : `${token}`
           }
         })
       }

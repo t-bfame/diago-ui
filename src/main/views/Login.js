@@ -108,51 +108,49 @@ const Login = () => {
         }
       }, [state.username, state.password]);
 
-    const handleLogin = async () => {
-      return getClient().post('login', {
-          username: state.username,
-          password: state.password,
-      })
-      .then((res) => res.json())
-      .then(async (result) => {
-        if (result["data"]["success"] === "true") {
-          setToken(result["data"]["payload"]["token"]);
-          dispatch({
-            type: 'loginSuccess',
-            payload: 'Login Successful'
-          });
-          history.push("/dashboard");
-        } else {
-          dispatch({
-            type: 'loginFailed',
-            payload: 'Incorrect username or password'
-          });
-        }
-      })
-    };
+      const handleLogin = async () => {
+        return getClient().post('login', {
+            Username: state.username,
+            Password: state.password,
+        })
+        .then(async (result) => {
+          if (result.data.success === true) {
+            setToken(result.data.payload.token);
+            dispatch({
+              type: 'loginSuccess',
+              payload: 'Login Successful'
+            });
+            history.push("/");
+          } else {
+            dispatch({
+              type: 'loginFailed',
+              payload: 'Incorrect username or password'
+            });
+          }
+        })
+      };
 
-    const handleSignUp = async () => {
-      return getClient().post(`user`, {
-        username: state.username,
-        password: state.password,
-      })
-      .then((res) => res.json())
-      .then((result) => {
-        console.log(result)
-        if (result["data"]["success"] === "true") {
-          dispatch({
-            type: 'loginSuccess',
-            payload: 'Account created!'
-          });
-        } else {
-          dispatch({
-            type: 'loginFailed',
-            payload: 'Username already exists!'
-          });
-          console.log(result);
-        }
-      });
-    }
+      const handleSignUp = async () => {
+        return getClient().post(`user`, {
+          Username: state.username,
+          Password: state.password,
+        })
+        .then((result) => {
+          if (result.data.success === true) {
+            setToken(result.data.payload.token);
+            dispatch({
+              type: 'loginSuccess',
+              payload: 'Account created!'
+            });
+            history.push('/')
+          } else {
+            dispatch({
+              type: 'loginFailed',
+              payload: 'Username already exists!'
+            });
+          }
+        });
+      }
     
     const handleKeyPress = (event: React.KeyboardEvent) => {
       if (event.keyCode === 13 || event.which === 13) {
