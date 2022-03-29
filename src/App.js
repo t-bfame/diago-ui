@@ -28,17 +28,17 @@ function App() {
 
   return (
     <UserContext.Provider value={userActions}>
-    <BrowserRouter>
-      <Switch>
-        <Route path="/auth/login" component={Login}/>
-        <PrivateRoute exact path="/" component={LandingPage} />
-        {/* <Route exact path="/tests" component={MainPage} /> */}
-        <PrivateRoute exact path="/create-test-template" component={CreateTestTemplatePage} />
-        <PrivateRoute path="/test-template-details/:id" component={TestTemplateDetailsPage} />
-        <PrivateRoute exact path="/test-instance-details/:id" component={TestInstanceDetailsPage} />
-        <PrivateRoute render={() => <h1>Oops! Page not found!</h1>} />
-      </Switch>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/auth/login" component={Login} />
+          <PrivateRoute exact path="/" component={LandingPage} />
+          {/* <Route exact path="/tests" component={MainPage} /> */}
+          <PrivateRoute exact path="/create-test-template" component={CreateTestTemplatePage} />
+          <PrivateRoute path="/test-template-details/:id" component={TestTemplateDetailsPage} />
+          <PrivateRoute exact path="/test-instance-details/:id" component={TestInstanceDetailsPage} />
+          <PrivateRoute render={() => <h1>Oops! Page not found!</h1>} />
+        </Switch>
+      </BrowserRouter>
     </UserContext.Provider>
   );
 }

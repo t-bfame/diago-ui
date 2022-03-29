@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { Layout, Menu, Space, Typography }  from 'antd';
+import { Layout, Menu, Space, Typography } from 'antd';
 import {
   PieChartOutlined,
   GithubOutlined,
@@ -19,13 +19,13 @@ const { Title } = Typography;
 class Page extends Component {
   constructor(props) {
     super(props);
-    this.state= {
+    this.state = {
       collapsed: false,
     };
   }
 
   onCollapse = collapsed => {
-    this.setState({collapsed});
+    this.setState({ collapsed });
   }
 
   handleNavigation = e => {
@@ -39,16 +39,16 @@ class Page extends Component {
     const { CustomPageHeader, CustomPageContent, currentPage } = this.props;
     const { collapsed } = this.state;
     const siteTitleLogo = <img className='logo' src={Logo} alt="Diago" />;
-    
+
     return (
       <Layout>
         <Sider style={{
-        overflow: 'auto',
-        height: '100vh',
-        position: 'sticky',
-        left: 0,
-        top: 0,
-      }} collapsed={collapsed} onCollapse={this.onCollapse}>
+          overflow: 'auto',
+          height: '100vh',
+          position: 'sticky',
+          left: 0,
+          top: 0,
+        }} collapsed={collapsed} onCollapse={this.onCollapse}>
           <div className="logo-container">
             <Title
               level={3}
@@ -58,8 +58,8 @@ class Page extends Component {
               }}
             >
               <Space direction="vertical">
-              {siteTitleLogo}
-              Diago
+                {siteTitleLogo}
+                Diago
               </Space>
             </Title>
           </div>
@@ -103,7 +103,7 @@ class Page extends Component {
           >
             {CustomPageContent}
           </Content>
-          <Footer style={{ textAlign: 'center' }}>©2021 Created by t-bfame</Footer>
+          <Footer style={{ textAlign: 'center' }}>©2022 Created by t-bfame and KRAM</Footer>
         </Layout>
       </Layout>
     );
